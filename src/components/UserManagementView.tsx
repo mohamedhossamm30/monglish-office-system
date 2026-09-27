@@ -22,7 +22,7 @@ import {
   EmailAuthProvider,
   updatePassword
 } from 'firebase/auth';
-import { logActivity } from '../utils/storage';
+import { logActivity, getRoleDefaultCanWrite } from '../utils/storage';
 import {
   Users,
   UserPlus,
@@ -162,11 +162,7 @@ export const UserManagementView: React.FC<UserManagementViewProps> = ({
       const targetRoleMeta = ROLES[newRole] || { tabs: ['requests'] };
       const userDocRef = doc(db, 'users', newUid);
 
-      const canWritePerms =
-        newRole === 'manager'
-          ? ['*']
-          : [newRole, 'reqs', 'activities'];
-
+      const canWritePerms = getRoleDefaultCanWrite(newRole);
       const canStockMove = ['manager', 'warehouse', 'buffet', 'cleaning', 'reception'].includes(newRole);
 
       await setDoc(userDocRef, {
@@ -295,7 +291,7 @@ export const UserManagementView: React.FC<UserManagementViewProps> = ({
     setIsUpdatingUser(true);
     try {
       const userDocRef = doc(db, 'users', editingUser.uid);
-      const canWritePerms = editRole === 'manager' ? ['*'] : [editRole, 'reqs', 'activities'];
+      const canWritePerms = getRoleDefaultCanWrite(editRole);
       const canStockMove = ['manager', 'warehouse', 'buffet', 'cleaning', 'reception'].includes(editRole);
 
       await updateDoc(userDocRef, {

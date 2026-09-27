@@ -28,6 +28,7 @@ import {
   loadData,
   loadRoles,
   ROLE_ALLOWED_TABS,
+  getRoleDefaultCanWrite,
   saveData,
   saveRoles,
   today,
@@ -185,9 +186,9 @@ export default function App() {
             displayName: d.displayName || d.label || roleConfig?.label || roleKey,
             role: roleKey,
             label: d.label || d.displayName || roleConfig?.label || roleKey,
-            canWrite: Array.isArray(d.canWrite)
+            canWrite: Array.isArray(d.canWrite) && d.canWrite.length > 0
               ? d.canWrite
-              : (roleKey === 'manager' ? ['*'] : [roleKey, 'reqs', 'activities']),
+              : getRoleDefaultCanWrite(roleKey),
             canStockMove: d.canStockMove !== undefined
               ? !!d.canStockMove
               : ['manager', 'warehouse', 'buffet', 'cleaning', 'reception'].includes(roleKey),
@@ -338,9 +339,10 @@ export default function App() {
       moves,
       pettyCash,
       maint,
-      reqs
+      reqs,
+      stock
     });
-  }, [proc, moves, pettyCash, maint, reqs]);
+  }, [proc, moves, pettyCash, maint, reqs, stock]);
 
   // Automatic check & notification generation for Asset Periodic Maintenance
   useEffect(() => {
@@ -1048,6 +1050,8 @@ export default function App() {
     }
 
     clearAllLocalCachedData();
+    initializedCollectionsRef.current = {};
+    knownActivityIdsRef.current = new Set();
     setItems([]);
     setMoves([]);
     setProc([]);
@@ -1705,7 +1709,7 @@ export default function App() {
   const unreadCount = useMemo(() => activities.filter((a) => !a.read).length, [activities]);
   const pendingReqsCount = useMemo(() => reqs.filter((r) => r.status === 'جديد').length, [reqs]);
   const pendingProcCount = useMemo(
-    () => proc.filter((p) => p.status !== 'مكتمل' && p.status !== 'ملغي').length,
+    () => proc.filter((p) => p.status !== 'مكتمل' && p.status !== 'تم الاستلام' && p.status !== 'ملغي').length,
     [proc]
   );
 

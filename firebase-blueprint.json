@@ -3,18 +3,37 @@
     "Item": {
       "title": "Item",
       "type": "object",
-      "description": "Inventory item for Monglish Academy",
+      "description": "Inventory item entity",
       "properties": {
         "id": { "type": "string" },
         "name": { "type": "string" },
         "cat": { "type": "string" },
         "unit": { "type": "string" },
-        "qty": { "type": "number" },
+        "balance": { "type": "number" },
         "minQty": { "type": "number" },
         "cost": { "type": "number" },
-        "code": { "type": "string" }
+        "code": { "type": "string" },
+        "deleted": { "type": "boolean" },
+        "updatedAt": { "type": "string" }
       },
       "required": ["id", "name", "cat"]
+    },
+    "StockMove": {
+      "title": "StockMove",
+      "type": "object",
+      "description": "Inventory stock movement record",
+      "properties": {
+        "id": { "type": "string" },
+        "itemId": { "type": "string" },
+        "itemName": { "type": "string" },
+        "qty": { "type": "number" },
+        "type": { "type": "string", "enum": ["in", "out", "adj"] },
+        "date": { "type": "string" },
+        "reason": { "type": "string" },
+        "by": { "type": "string" },
+        "deleted": { "type": "boolean" }
+      },
+      "required": ["id", "itemId", "qty", "type", "date"]
     },
     "PurchaseOrder": {
       "title": "PurchaseOrder",
@@ -24,14 +43,171 @@
         "id": { "type": "string" },
         "supplier": { "type": "string" },
         "date": { "type": "string" },
-        "status": { "type": "string" }
+        "status": { "type": "string" },
+        "items": { "type": "array" },
+        "total": { "type": "number" },
+        "by": { "type": "string" },
+        "deleted": { "type": "boolean" }
       },
       "required": ["id", "supplier", "date", "status"]
+    },
+    "MaintenanceTicket": {
+      "title": "MaintenanceTicket",
+      "type": "object",
+      "description": "Facility and equipment maintenance ticket",
+      "properties": {
+        "id": { "type": "string" },
+        "title": { "type": "string" },
+        "category": { "type": "string" },
+        "status": { "type": "string" },
+        "priority": { "type": "string" },
+        "date": { "type": "string" },
+        "deleted": { "type": "boolean" }
+      },
+      "required": ["id", "title", "status"]
+    },
+    "CleaningTask": {
+      "title": "CleaningTask",
+      "type": "object",
+      "description": "Cleaning checklist task",
+      "properties": {
+        "id": { "type": "string" },
+        "title": { "type": "string" },
+        "area": { "type": "string" },
+        "schedule": { "type": "string" },
+        "deleted": { "type": "boolean" }
+      },
+      "required": ["id", "title"]
+    },
+    "CleaningHistory": {
+      "title": "CleaningHistory",
+      "type": "object",
+      "description": "Cleaning execution log",
+      "properties": {
+        "id": { "type": "string" },
+        "taskId": { "type": "string" },
+        "date": { "type": "string" },
+        "by": { "type": "string" },
+        "status": { "type": "string" }
+      },
+      "required": ["id", "taskId", "date"]
+    },
+    "MobileLine": {
+      "title": "MobileLine",
+      "type": "object",
+      "description": "Company SIM card and telecom line",
+      "properties": {
+        "id": { "type": "string" },
+        "number": { "type": "string" },
+        "assignedTo": { "type": "string" },
+        "carrier": { "type": "string" },
+        "plan": { "type": "string" },
+        "deleted": { "type": "boolean" }
+      },
+      "required": ["id", "number"]
+    },
+    "DepartmentRequest": {
+      "title": "DepartmentRequest",
+      "type": "object",
+      "description": "Internal department requisition",
+      "properties": {
+        "id": { "type": "string" },
+        "department": { "type": "string" },
+        "item": { "type": "string" },
+        "qty": { "type": "number" },
+        "status": { "type": "string" },
+        "date": { "type": "string" },
+        "deleted": { "type": "boolean" }
+      },
+      "required": ["id", "department", "item", "qty"]
+    },
+    "Supplier": {
+      "title": "Supplier",
+      "type": "object",
+      "description": "Supplier directory contact",
+      "properties": {
+        "id": { "type": "string" },
+        "name": { "type": "string" },
+        "category": { "type": "string" },
+        "phone": { "type": "string" },
+        "deleted": { "type": "boolean" }
+      },
+      "required": ["id", "name"]
+    },
+    "RecurringTemplate": {
+      "title": "RecurringTemplate",
+      "type": "object",
+      "description": "Recurring commitment template",
+      "properties": {
+        "id": { "type": "string" },
+        "title": { "type": "string" },
+        "amount": { "type": "number" },
+        "frequency": { "type": "string" },
+        "deleted": { "type": "boolean" }
+      },
+      "required": ["id", "title"]
+    },
+    "PhysicalStocktake": {
+      "title": "PhysicalStocktake",
+      "type": "object",
+      "description": "Inventory stocktake audit record",
+      "properties": {
+        "id": { "type": "string" },
+        "date": { "type": "string" },
+        "by": { "type": "string" },
+        "entries": { "type": "array" },
+        "status": { "type": "string" }
+      },
+      "required": ["id", "date"]
+    },
+    "PettyCashExpense": {
+      "title": "PettyCashExpense",
+      "type": "object",
+      "description": "Petty cash voucher / expense",
+      "properties": {
+        "id": { "type": "string" },
+        "amount": { "type": "number" },
+        "description": { "type": "string" },
+        "category": { "type": "string" },
+        "date": { "type": "string" },
+        "by": { "type": "string" },
+        "deleted": { "type": "boolean" }
+      },
+      "required": ["id", "amount", "date"]
+    },
+    "SystemActivity": {
+      "title": "SystemActivity",
+      "type": "object",
+      "description": "Audit trail log event",
+      "properties": {
+        "id": { "type": "string" },
+        "ts": { "type": "number" },
+        "user": { "type": "string" },
+        "action": { "type": "string" },
+        "category": { "type": "string" },
+        "details": { "type": "string" },
+        "deleted": { "type": "boolean" }
+      },
+      "required": ["id", "ts", "action"]
+    },
+    "UserProfile": {
+      "title": "UserProfile",
+      "type": "object",
+      "description": "User profile with role and access flags",
+      "properties": {
+        "uid": { "type": "string" },
+        "email": { "type": "string" },
+        "name": { "type": "string" },
+        "role": { "type": "string" },
+        "canWrite": { "type": "boolean" },
+        "active": { "type": "boolean" }
+      },
+      "required": ["uid", "email", "role"]
     },
     "SystemState": {
       "title": "SystemState",
       "type": "object",
-      "description": "Central state document for Monglish Academy Operations",
+      "description": "Central system status and configuration documents",
       "properties": {
         "version": { "type": "number" },
         "lastUpdated": { "type": "string" }
@@ -41,15 +217,63 @@
   "firestore": {
     "/system/{docId}": {
       "schema": "SystemState",
-      "description": "Central synchronization and operations datasets document"
+      "description": "System configuration, roles, metadata and locks"
+    },
+    "/users/{userId}": {
+      "schema": "UserProfile",
+      "description": "User profiles and RBAC metadata"
     },
     "/items/{itemId}": {
       "schema": "Item",
-      "description": "Inventory items store"
+      "description": "Inventory items collection"
     },
-    "/procurement/{orderId}": {
+    "/moves/{moveId}": {
+      "schema": "StockMove",
+      "description": "Warehouse stock moves collection"
+    },
+    "/proc/{orderId}": {
       "schema": "PurchaseOrder",
-      "description": "Procurement orders store"
+      "description": "Procurement purchase orders collection"
+    },
+    "/maint/{ticketId}": {
+      "schema": "MaintenanceTicket",
+      "description": "Facility maintenance tickets"
+    },
+    "/clean/{taskId}": {
+      "schema": "CleaningTask",
+      "description": "Cleaning checklist tasks"
+    },
+    "/cleanHist/{histId}": {
+      "schema": "CleaningHistory",
+      "description": "Cleaning execution log history"
+    },
+    "/lines/{lineId}": {
+      "schema": "MobileLine",
+      "description": "Mobile SIM cards and lines"
+    },
+    "/reqs/{reqId}": {
+      "schema": "DepartmentRequest",
+      "description": "Department requisition requests"
+    },
+    "/suppliers/{supplierId}": {
+      "schema": "Supplier",
+      "description": "Supplier contacts and records"
+    },
+    "/recurring/{recId}": {
+      "schema": "RecurringTemplate",
+      "description": "Recurring obligations templates"
+    },
+    "/stock/{stockId}": {
+      "schema": "PhysicalStocktake",
+      "description": "Physical inventory stocktake records"
+    },
+    "/pettyCash/{expenseId}": {
+      "schema": "PettyCashExpense",
+      "description": "Petty cash and treasury records"
+    },
+    "/activities/{actId}": {
+      "schema": "SystemActivity",
+      "description": "System activity logs and audit trail"
     }
   }
 }

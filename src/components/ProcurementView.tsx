@@ -478,80 +478,12 @@ export const ProcurementView: React.FC<ProcurementViewProps> = ({
     const o = proc.find((x) => x.id === orderId);
     if (!o) return;
 
-    if (o.status === 'مكتمل') {
+    if (o.status === 'مكتمل' || o.status === 'تم الاستلام') {
       showToast('⚠️ أمر الشراء مستلم ومورد للمخزن مسبقاً بالفعل منعاً للتكرار');
       return;
     }
 
     const receiverTitle = isMgr ? 'المدير' : (currentRole === 'warehouse' || currentRole === 'inventory') ? 'أمين المخزن' : 'مسؤول المشتريات';
-
-    let grnSequence = '';
-    if (status === 'مكتمل') {
-      let updatedItems = [...items];
-      const newMoves: StockMove[] = [];
-      const newCreatedItems: InventoryItem[] = [];
-      grnSequence = getNextDocumentSequence('GRN');
-
-      (o.lines || []).forEach((l, idx) => {
-        // Find existing item by id OR by name
-        let it = updatedItems.find(
-          (i) => (l.itemId && i.id === l.itemId) || normName(i.name) === normName(l.itemName)
-        );
-
-        if (!it) {
-          // Create new item in inventory with the specified/generated code
-          const code = (l.code && l.code.trim()) || getNextItemCode(l.cat, updatedItems);
-          it = {
-            id: l.itemId || uid(),
-            code,
-            name: l.itemName.trim(),
-            cat: l.cat,
-            unit: l.unit || 'عدد',
-            balance: 0, // Balance will be incremented by handleSaveMoves
-            min: l.newMin || 5,
-            cost: l.price || 0,
-            loc: l.cat === 'BUFF' ? 'بوفيه المركز' : l.cat === 'CLN' ? 'مخزن النظافة' : 'المخزن الرئيسي'
-          };
-          updatedItems.push(it);
-          newCreatedItems.push(it);
-        }
-
-        // Link item id to order line
-        l.itemId = it.id;
-
-        if (l.price > 0) {
-          it.cost = l.price;
-        }
-        if (!it.code || it.code.trim() === '') {
-          it.code = l.code || getNextItemCode(it.cat, updatedItems);
-        }
-
-        // Record incoming stock movement with UNIQUE ID and common GRN Sequence
-        const moveUniqueId = `${grnSequence}_${idx + 1}_${uid().slice(0, 5)}`;
-        newMoves.push({
-          id: moveUniqueId,
-          voucherNo: grnSequence,
-          docType: 'GRN',
-          itemId: it.id,
-          itemName: it.name,
-          code: it.code,
-          cat: it.cat,
-          type: 'in',
-          qty: l.qty,
-          cost: +(l.qty * l.price).toFixed(2),
-          person: o.supplier || 'المورد',
-          note: `استلام وتوريد بموجب إذن [${grnSequence}] من أمر شراء [${o.id}]`,
-          date: today(),
-          ts: Date.now() + idx,
-          by: receiverTitle
-        });
-      });
-
-      // Pass updated items list to onSaveMoves so it safely increments balances without duplicate overwrite
-      if (typeof onSaveMoves === 'function') {
-        onSaveMoves([...newMoves, ...moves], updatedItems);
-      }
-    }
 
     const updatedProc = proc.map((x) =>
       x.id === orderId
@@ -570,7 +502,7 @@ export const ProcurementView: React.FC<ProcurementViewProps> = ({
     }
 
     if (status === 'مكتمل') {
-      showToast(`تم استلام أمر الشراء وتوريد الأصناف بنجاح للمخزن بإذن [${grnSequence}] بواسطة (${receiverTitle}) ✓`);
+      showToast(`تم استلام أمر الشراء وتوريد الأصناف بنجاح للمخزن بواسطة (${receiverTitle}) ✓`);
     } else {
       showToast('تم إلغاء أمر الشراء');
     }
@@ -869,16 +801,18 @@ export const ProcurementView: React.FC<ProcurementViewProps> = ({
                             <span>تعديل</span>
                           </button>
                         )}
-                        {(isMgr || currentRole === 'warehouse' || currentRole === 'inventory') && o.status === 'قيد التنفيذ' && (
+                        {o.status === 'قيد التنفيذ' && (
                           <>
-                            <button
-                              onClick={() => handleSetOrderStatus(o.id, 'مكتمل')}
-                              className="px-2.5 py-1 rounded-lg text-[11px] font-bold text-white bg-emerald-700 hover:bg-emerald-800 transition-all cursor-pointer flex items-center gap-1 shadow-2xs"
-                              title="استلام وتوريد الأصناف وتحديث الأرصدة بالمخزن فوراً"
-                            >
-                              <Check className="w-3 h-3 text-white" />
-                              <span>استلام المخزن (مكتمل)</span>
-                            </button>
+                            {(isMgr || currentRole === 'warehouse' || currentRole === 'inventory') && (
+                              <button
+                                onClick={() => handleSetOrderStatus(o.id, 'مكتمل')}
+                                className="px-2.5 py-1 rounded-lg text-[11px] font-bold text-white bg-emerald-700 hover:bg-emerald-800 transition-all cursor-pointer flex items-center gap-1 shadow-2xs"
+                                title="استلام وتوريد الأصناف وتحديث الأرصدة بالمخزن فوراً"
+                              >
+                                <Check className="w-3 h-3 text-white" />
+                                <span>استلام المخزن (مكتمل)</span>
+                              </button>
+                            )}
                             <button
                               onClick={() => handleSetOrderStatus(o.id, 'ملغي')}
                               className="px-2 py-1 rounded-lg text-[11px] font-bold text-rose-700 bg-rose-50 hover:bg-rose-100 border border-rose-200 transition-all cursor-pointer"
@@ -888,7 +822,7 @@ export const ProcurementView: React.FC<ProcurementViewProps> = ({
                             </button>
                           </>
                         )}
-                        {isMgr && (
+                        {(isMgr || currentRole === 'purchase') && (
                           <button
                             onClick={() => handleDeleteProc(o.id)}
                             className="p-1 rounded-lg text-rose-500 hover:text-rose-700 hover:bg-rose-50 cursor-pointer"

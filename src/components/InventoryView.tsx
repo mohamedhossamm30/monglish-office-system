@@ -138,6 +138,7 @@ export const InventoryView: React.FC<InventoryViewProps> = ({
 
   // Receipts Tab Filter
   const [receiptsStatusFilter, setReceiptsStatusFilter] = useState<'ALL' | 'pending' | 'completed'>('ALL');
+  const [receiptsSearch, setReceiptsSearch] = useState<string>('');
 
   // Filtered items
   const filteredItems = useMemo(() => {
@@ -195,7 +196,7 @@ export const InventoryView: React.FC<InventoryViewProps> = ({
   const lowItems = useMemo(() => safeItems.filter((i) => i.balance < i.min), [safeItems]);
   const outItems = useMemo(() => safeItems.filter((i) => i.balance <= 0), [safeItems]);
   const pendingReceiptsCount = useMemo(
-    () => safeProc.filter((p) => p.status !== 'مكتمل' && p.status !== 'ملغي').length,
+    () => safeProc.filter((p) => p.status !== 'مكتمل' && p.status !== 'تم الاستلام' && p.status !== 'ملغي').length,
     [safeProc]
   );
 
@@ -436,89 +437,18 @@ export const InventoryView: React.FC<InventoryViewProps> = ({
   const handleConfirmReceiveOrder = () => {
     if (!receivingOrder) return;
 
-    if (receivingOrder.status === 'مكتمل') {
+    if (receivingOrder.status === 'مكتمل' || receivingOrder.status === 'تم الاستلام') {
       showToast('⚠️ أمر الشراء مستلم ومورد للمخزن مسبقاً بالفعل لمنع التكرار');
       setReceivingOrder(null);
       return;
     }
 
-    let currentItems = [...safeItems];
-    const newMovesList: StockMove[] = [];
-    const newlyCreatedItems: InventoryItem[] = [];
-    let orderCostTotal = 0;
-    const grnSeq = getNextDocumentSequence('GRN');
     const receiverName = receiptReceiver.trim() || (isMgr ? 'المدير' : 'أمين المخزن');
-
-    (receivingOrder.lines || []).forEach((line, idx) => {
-      const lineCost = +(Number(line.qty || 0) * Number(line.price || 0)).toFixed(2);
-      orderCostTotal += lineCost;
-
-      let itemObj: InventoryItem;
-      const existingIndex = currentItems.findIndex(
-        (i) => (line.itemId && i.id === line.itemId) || normName(i.name) === normName(line.itemName)
-      );
-
-      if (existingIndex !== -1) {
-        const existing = currentItems[existingIndex];
-        const newCost = line.price > 0 ? line.price : existing.cost;
-        itemObj = {
-          ...existing,
-          cost: newCost
-        };
-        if (!itemObj.code || itemObj.code.startsWith('PO-')) {
-          itemObj.code = line.code || getNextItemCode(itemObj.cat, currentItems);
-        }
-        currentItems[existingIndex] = itemObj;
-      } else {
-        const targetCat = line.cat || 'STAT';
-        const code = (line.code && line.code.trim()) || getNextItemCode(targetCat, currentItems);
-        const deptLocation =
-          targetCat === 'BUFF'
-            ? 'بوفيه المركز'
-            : targetCat === 'CLN'
-            ? 'مخزن النظافة'
-            : 'المخزن الرئيسي';
-
-        itemObj = {
-          id: line.itemId || uid(),
-          code,
-          name: line.itemName.trim(),
-          cat: targetCat,
-          unit: line.unit || 'عدد',
-          balance: 0, // Balance will be incremented by handleSaveMoves
-          min: 5,
-          cost: line.price,
-          loc: deptLocation
-        };
-        currentItems.push(itemObj);
-        newlyCreatedItems.push(itemObj);
-      }
-
-      line.itemId = itemObj.id;
-
-      // Unique move ID with shared GRN sequence voucher
-      const moveUniqueId = `${grnSeq}_${idx + 1}_${uid().slice(0, 5)}`;
-      newMovesList.push({
-        id: moveUniqueId,
-        voucherNo: grnSeq,
-        docType: 'GRN',
-        itemId: itemObj.id,
-        itemName: itemObj.name,
-        code: itemObj.code,
-        cat: itemObj.cat,
-        type: 'in',
-        qty: line.qty,
-        cost: lineCost,
-        person: receivingOrder.supplier || 'المورد',
-        note: `استلام وتوريد بموجب إذن [${grnSeq}] من أمر شراء [${receivingOrder.id}]${receiptInvoiceNumber ? ` (فاتورة #${receiptInvoiceNumber})` : ''}${receiptNote ? ` — ${receiptNote}` : ''}`,
-        date: today(),
-        ts: Date.now() + idx,
-        by: receiverName
-      });
-    });
-
-    // Pass all modified/created items to onSaveMoves so it updates local and Firestore balances atomically
-    onSaveMoves([...newMovesList, ...safeMoves], currentItems);
+    const grnSeq = getNextDocumentSequence('GRN');
+    const orderCostTotal = (receivingOrder.lines || []).reduce(
+      (sum, l) => sum + Number(l.qty || 0) * Number(l.price || 0),
+      0
+    );
 
     if (onSaveProc) {
       const updatedOrders = safeProc.map((o) =>
@@ -540,12 +470,12 @@ export const InventoryView: React.FC<InventoryViewProps> = ({
     if (onPrintVoucher) {
       onPrintVoucher({
         title: 'إذن استلام وتوريد مخزني (بضاعة واردة من المشتريات)',
-        subtitle: `أمر شراء [${receivingOrder.id}]${receiptInvoiceNumber ? ` | فاتورة مورد رقم: ${receiptInvoiceNumber}` : ''}`,
+        subtitle: `أمر شراء [${receivingOrder.orderNumber || receivingOrder.id}]${receiptInvoiceNumber ? ` | فاتورة مورد رقم: ${receiptInvoiceNumber}` : ''}`,
         voucherNumber: grnSeq,
         date: today(),
         department: 'المخازن المركزية',
         person: receivingOrder.supplier || 'المورد',
-        by: receiptReceiver.trim() || 'أمين المخزن',
+        by: receiverName,
         notes: receiptNote.trim() || undefined,
         totalCost: orderCostTotal,
         items: (receivingOrder.lines || []).map((l) => ({
@@ -553,13 +483,12 @@ export const InventoryView: React.FC<InventoryViewProps> = ({
           unit: l.unit,
           qty: l.qty,
           price: l.price,
-          total: l.qty * l.price
+          total: (Number(l.qty) || 0) * (Number(l.price) || 0)
         }))
       });
     }
 
     setReceivingOrder(null);
-    showToast(`تم استلام وتوريد أصناف أمر الشراء بنجاح بإذن [${grnSeq}] وتحديث أرصدة وتكلفة المخزن ✓`);
   };
 
   // Quick Print of an existing StockMove
@@ -621,15 +550,28 @@ export const InventoryView: React.FC<InventoryViewProps> = ({
   // Filtered Procurement in Receipts Tab
   const filteredReceiptOrders = useMemo(() => {
     return safeProc.filter((p) => {
+      const isDone = p.status === 'مكتمل' || p.status === 'تم الاستلام';
+      const isCancelled = p.status === 'ملغي';
       if (receiptsStatusFilter === 'pending') {
-        return p.status !== 'مكتمل' && p.status !== 'ملغي';
+        if (isDone || isCancelled) return false;
+      } else if (receiptsStatusFilter === 'completed') {
+        if (!isDone) return false;
       }
-      if (receiptsStatusFilter === 'completed') {
-        return p.status === 'مكتمل';
+
+      if (receiptsSearch) {
+        const q = receiptsSearch.toLowerCase();
+        const matchId = (p.id || '').toLowerCase().includes(q) || (p.orderNumber || '').toLowerCase().includes(q);
+        const matchSup = (p.supplier || '').toLowerCase().includes(q);
+        const matchInv = (p.invoiceNumber || '').toLowerCase().includes(q);
+        const matchLines = (p.lines || []).some((l) => l.itemName.toLowerCase().includes(q) || (l.code || '').toLowerCase().includes(q));
+        if (!matchId && !matchSup && !matchInv && !matchLines) {
+          return false;
+        }
       }
+
       return true;
     });
-  }, [safeProc, receiptsStatusFilter]);
+  }, [safeProc, receiptsStatusFilter, receiptsSearch]);
 
   return (
     <div className="space-y-6">
@@ -1116,15 +1058,42 @@ export const InventoryView: React.FC<InventoryViewProps> = ({
                   receiptsStatusFilter === 'completed' ? 'bg-emerald-600 text-white shadow-xs' : 'text-stone-600 hover:bg-stone-100'
                 }`}
               >
-                مكتملة ومستلمة ({safeProc.filter((p) => p.status === 'مكتمل').length})
+                مكتملة ومستلمة ({safeProc.filter((p) => p.status === 'مكتمل' || p.status === 'تم الاستلام').length})
               </button>
+            </div>
+          </div>
+
+          {/* Receipts Search Bar */}
+          <div className="bg-white p-3 rounded-xl border border-stone-200 shadow-xs flex items-center justify-between gap-3 flex-wrap">
+            <div className="relative flex-1 min-w-[240px] max-w-md">
+              <Search className="w-4 h-4 text-stone-400 absolute right-3 top-1/2 -translate-y-1/2" />
+              <input
+                type="text"
+                placeholder="ابحث برقم أمر الشراء، المورد، الفاتورة، أو اسم الصنف..."
+                value={receiptsSearch}
+                onChange={(e) => setReceiptsSearch(e.target.value)}
+                className="w-full pl-3 pr-9 py-2 bg-stone-50 rounded-xl border border-stone-200 text-xs font-medium focus:bg-white focus:border-[#075073] focus:outline-none"
+              />
+              {receiptsSearch && (
+                <button
+                  type="button"
+                  onClick={() => setReceiptsSearch('')}
+                  className="absolute left-2.5 top-1/2 -translate-y-1/2 text-stone-400 hover:text-stone-600"
+                >
+                  <X className="w-3.5 h-3.5" />
+                </button>
+              )}
+            </div>
+
+            <div className="text-xs text-stone-500 flex items-center gap-2">
+              <span>الأوامر المعروضة: <strong className="text-[#075073] font-mono font-bold">{filteredReceiptOrders.length}</strong> أمر</span>
             </div>
           </div>
 
           {/* Orders Awaiting Intake */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {filteredReceiptOrders.map((order) => {
-              const isReceived = order.status === 'مكتمل';
+              const isReceived = order.status === 'مكتمل' || order.status === 'تم الاستلام';
               const isCancelled = order.status === 'ملغي';
               const orderTotalCost = (order.lines || []).reduce((sum, l) => sum + (l.qty || 0) * (l.price || 0), 0);
 
@@ -1143,7 +1112,7 @@ export const InventoryView: React.FC<InventoryViewProps> = ({
                     <div>
                       <div className="flex items-center gap-2">
                         <span className="font-mono bg-stone-100 text-[#075073] font-black px-2 py-0.5 rounded text-xs">
-                          #{order.id.slice(-5)}
+                          {order.orderNumber || order.id}
                         </span>
                         <h4 className="text-sm font-black text-[#075073]">{order.supplier}</h4>
                       </div>
@@ -1221,8 +1190,8 @@ export const InventoryView: React.FC<InventoryViewProps> = ({
                         onClick={() => {
                           onPrintVoucher({
                             title: isReceived ? 'إذن استلام وتوريد مخزني (معتمد)' : 'أمر شراء وبضاعة قيد التوريد',
-                            subtitle: `أمر شراء #${order.id.slice(-5)}${order.invoiceNumber ? ` | فاتورة #${order.invoiceNumber}` : ''}`,
-                            voucherNumber: `PO-${order.id.slice(-5)}`,
+                            subtitle: `أمر شراء #${order.orderNumber || order.id}${order.invoiceNumber ? ` | فاتورة #${order.invoiceNumber}` : ''}`,
+                            voucherNumber: order.orderNumber || order.id,
                             date: order.receivedDate || order.date,
                             department: 'المخازن العامة',
                             person: order.supplier || 'المورد',

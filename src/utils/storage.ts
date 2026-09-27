@@ -2252,6 +2252,27 @@ export async function readExcelFile(file: File): Promise<Record<string, any>[]> 
 }
 
 /* ---------------- User & Role Control Functions ---------------- */
+export function getRoleDefaultCanWrite(role: string): string[] {
+  switch (role) {
+    case 'manager':
+      return ['*'];
+    case 'purchase':
+      return ['proc', 'suppliers', 'recurring', 'reqs', 'activities'];
+    case 'warehouse':
+      return ['items', 'moves', 'proc', 'stock', 'reqs', 'activities'];
+    case 'maint':
+      return ['maint', 'assets', 'reqs', 'activities'];
+    case 'buffet':
+      return ['moves', 'pettyCash', 'reqs', 'activities'];
+    case 'cleaning':
+      return ['clean', 'cleanHist', 'reqs', 'activities'];
+    case 'reception':
+      return ['lines', 'maint', 'pettyCash', 'reqs', 'activities'];
+    default:
+      return [role, 'reqs', 'activities'];
+  }
+}
+
 export function getDefaultRoles(): Record<string, RoleConfig> {
   const mapped: Record<string, RoleConfig> = {};
   Object.entries(ROLES).forEach(([k, v]) => {

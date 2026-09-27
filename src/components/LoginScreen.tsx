@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { RoleConfig, RoleKey, AuthUser } from '../types';
-import { isHostedMode, loadRoles, logActivity, clearAllLocalCachedData } from '../utils/storage';
+import { isHostedMode, loadRoles, logActivity, clearAllLocalCachedData, getRoleDefaultCanWrite } from '../utils/storage';
 import { ROLES } from '../data/seedData';
 import { auth, db } from '../firebase';
 import { signInWithEmailAndPassword, createUserWithEmailAndPassword, signInAnonymously, signOut } from 'firebase/auth';
@@ -167,7 +167,7 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({
           email: emailToAuth,
           role: assignedRole,
           label: isManagerRole ? 'المدير العام (مالك النظام)' : (targetRoleMeta.label || rawUsername),
-          canWrite: assignedRole === 'manager' ? ['*'] : [assignedRole, 'reqs', 'activities'],
+          canWrite: getRoleDefaultCanWrite(assignedRole),
           canStockMove: ['manager', 'warehouse', 'buffet', 'cleaning', 'reception'].includes(assignedRole),
           allowedTabs: assignedRole === 'manager' ? ROLES.manager.tabs : (targetRoleMeta.tabs || ['requests']),
           active: true,
@@ -211,9 +211,9 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({
         displayName: userData?.displayName || userData?.label || currentConfig.label,
         role: role as RoleKey,
         label: userData?.label || userData?.displayName || currentConfig.label,
-        canWrite: Array.isArray(userData?.canWrite)
+        canWrite: Array.isArray(userData?.canWrite) && userData.canWrite.length > 0
           ? userData.canWrite
-          : (role === 'manager' ? ['*'] : [role, 'reqs', 'activities']),
+          : getRoleDefaultCanWrite(role),
         canStockMove: userData?.canStockMove !== undefined
           ? !!userData.canStockMove
           : ['manager', 'warehouse', 'buffet', 'cleaning', 'reception'].includes(role),

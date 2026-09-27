@@ -173,6 +173,45 @@ export function parseDocumentSequence(code?: string): { type: DocumentTypeKey; y
 }
 
 /**
+ * Helper to scan existing items in storage and get max sequence for a document type
+ */
+function getMaxSequenceFromStorage(type: DocumentTypeKey, year: number): number {
+  if (typeof window === 'undefined') return 0;
+  let maxFound = 0;
+  try {
+    const checkList = (storageKey: string, idGetter: (item: any) => string | undefined) => {
+      const raw = localStorage.getItem(storageKey);
+      if (!raw) return;
+      const list = JSON.parse(raw);
+      if (Array.isArray(list)) {
+        for (const item of list) {
+          const code = idGetter(item);
+          const parsed = parseDocumentSequence(code);
+          if (parsed && parsed.type === type && parsed.year === year) {
+            maxFound = Math.max(maxFound, parsed.sequence);
+          }
+        }
+      }
+    };
+
+    if (type === 'PO') {
+      checkList('mo_proc', (i) => i.id || i.orderNumber);
+    } else if (type === 'GRN' || type === 'ISU' || type === 'ADJ') {
+      checkList('mo_moves', (i) => i.voucherNo || i.id);
+    } else if (type === 'MNT') {
+      checkList('mo_maint', (i) => i.id);
+    } else if (type === 'EXP') {
+      checkList('mo_petty_cash', (i) => i.receiptNo || i.id);
+    } else if (type === 'REQ') {
+      checkList('mo_reqs', (i) => i.requestCode || i.id);
+    } else if (type === 'STK') {
+      checkList('mo_stock', (i) => i.id);
+    }
+  } catch {}
+  return maxFound;
+}
+
+/**
  * Get next document sequence and atomically increment counter
  */
 export function getNextDocumentSequence(type: DocumentTypeKey, year?: number): string {
@@ -180,7 +219,8 @@ export function getNextDocumentSequence(type: DocumentTypeKey, year?: number): s
   const key = `${type}_${currentYear}`;
   const counters = loadSequenceCounters();
   
-  const currentVal = counters[key] || 0;
+  const maxStorageSeq = getMaxSequenceFromStorage(type, currentYear);
+  const currentVal = Math.max(counters[key] || 0, maxStorageSeq);
   const nextVal = currentVal + 1;
   counters[key] = nextVal;
   saveSequenceCounters(counters);
@@ -195,7 +235,9 @@ export function peekNextDocumentSequence(type: DocumentTypeKey, year?: number): 
   const currentYear = year || new Date().getFullYear();
   const key = `${type}_${currentYear}`;
   const counters = loadSequenceCounters();
-  const nextVal = (counters[key] || 0) + 1;
+  const maxStorageSeq = getMaxSequenceFromStorage(type, currentYear);
+  const currentVal = Math.max(counters[key] || 0, maxStorageSeq);
+  const nextVal = currentVal + 1;
   return formatDocumentSequence(type, nextVal, currentYear);
 }
 
