@@ -1,0 +1,6 @@
+{
+  "name": "نظام إدارة المكتب — مونجلش",
+  "description": "نظام إدارة المكتب الشامل لأكاديمية مونجلش الدولية - مقر الإسكندرية (المخازن، المشتريات، الصيانة، البوفيه، النظافة، خطوط الموبايل، التكاليف والأداء)",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

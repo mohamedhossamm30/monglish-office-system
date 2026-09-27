@@ -1,0 +1,131 @@
+[
+  {
+    "id": "rec-01",
+    "title": "إيجار مقر الأكاديمية الرئيسي (فرع الإسكندرية)",
+    "supplier": "مالك العقار - سموحة",
+    "estCost": 45000,
+    "type": "rent",
+    "period": "monthly",
+    "active": true,
+    "totalInstallments": 12,
+    "remainingInstallments": 4,
+    "nextDue": "2026-10-01",
+    "paymentMethod": "تحويل بنكي",
+    "notes": "إيجار شهري ثابت لفرع سموحة يشمل طابقين",
+    "history": [
+      {
+        "id": "p-1",
+        "date": "01/09/2026",
+        "amount": 45000,
+        "by": "المدير",
+        "note": "سداد إيجار شهر سبتمبر 2026"
+      },
+      {
+        "id": "p-2",
+        "date": "01/08/2026",
+        "amount": 45000,
+        "by": "المدير",
+        "note": "سداد إيجار شهر أغسطس 2026"
+      }
+    ]
+  },
+  {
+    "id": "rec-02",
+    "title": "اشتراك خطوط الإنترنت فايبر فائق السرعة (WE Business)",
+    "supplier": "الشركة المصرية للاتصالات WE",
+    "estCost": 3800,
+    "type": "subscription",
+    "period": "monthly",
+    "active": true,
+    "totalInstallments": 12,
+    "remainingInstallments": 5,
+    "nextDue": "2026-09-25",
+    "paymentMethod": "فوري / فيزا",
+    "notes": "خطين فايبر رئيسي واحتياطي لضمان استقرار فصول الأونلاين",
+    "history": [
+      {
+        "id": "p-3",
+        "date": "25/08/2026",
+        "amount": 3800,
+        "by": "الإدارة المالية",
+        "note": "سداد فاتورة أغسطس"
+      }
+    ]
+  },
+  {
+    "id": "rec-03",
+    "title": "قسط تجهيز قاعات المحاضرات وأجهزة التكييف",
+    "supplier": "شركة كاريير للتكييف والتبريد",
+    "estCost": 8500,
+    "type": "installment_monthly",
+    "period": "monthly",
+    "active": true,
+    "totalInstallments": 10,
+    "remainingInstallments": 3,
+    "nextDue": "2026-09-15",
+    "paymentMethod": "شيك بنكي",
+    "notes": "قسط شهري لتوريد وتركيب تكييفات القاعات الجديدة (متبقي 3 شيكات)",
+    "history": [
+      {
+        "id": "p-4",
+        "date": "15/08/2026",
+        "amount": 8500,
+        "by": "المدير",
+        "note": "سداد شيك رقم 4092"
+      },
+      {
+        "id": "p-5",
+        "date": "15/07/2026",
+        "amount": 8500,
+        "by": "المدير",
+        "note": "سداد شيك رقم 4091"
+      }
+    ]
+  },
+  {
+    "id": "rec-04",
+    "title": "فاتورة باقات خطوط الموبايل للفرع والمبيعات (Vodafone Red)",
+    "supplier": "شركة فودافون مصر",
+    "estCost": 4600,
+    "type": "subscription",
+    "period": "monthly",
+    "active": true,
+    "totalInstallments": 12,
+    "remainingInstallments": 4,
+    "nextDue": "2026-09-28",
+    "paymentMethod": "فوري / فيزا",
+    "notes": "باقات الاتصال ومكالمات خدمة العملاء والمبيعات والمدرسين",
+    "history": [
+      {
+        "id": "p-6",
+        "date": "28/08/2026",
+        "amount": 4600,
+        "by": "الإدارة المالية",
+        "note": "سداد باقة شهر أغسطس"
+      }
+    ]
+  },
+  {
+    "id": "rec-05",
+    "title": "قسط توريد شاشات وأجهزة كمبيوتر المعامل",
+    "supplier": "تكنولوجي مول سموحة",
+    "estCost": 12000,
+    "type": "installment_monthly",
+    "period": "monthly",
+    "active": true,
+    "totalInstallments": 6,
+    "remainingInstallments": 1,
+    "nextDue": "2026-09-20",
+    "paymentMethod": "شيك بنكي",
+    "notes": "قسط أجهزة معامل الاختبارات وتدريب اللغات (القسط قبل الأخير)",
+    "history": [
+      {
+        "id": "p-7",
+        "date": "20/08/2026",
+        "amount": 12000,
+        "by": "المدير",
+        "note": "سداد قسط أغسطس"
+      }
+    ]
+  }
+]

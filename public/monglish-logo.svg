@@ -1,0 +1,64 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 500 140" width="500" height="140" fill="none">
+  <defs>
+    <!-- Background Gradient -->
+    <linearGradient id="monglishBgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#075073"/>
+      <stop offset="100%" stop-color="#03151F"/>
+    </linearGradient>
+    <linearGradient id="orangeGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#FF9336"/>
+      <stop offset="100%" stop-color="#E68131"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Typography: Mônglish -->
+  <g id="monglish-wordmark">
+    <!-- M -->
+    <path d="M 45 88 L 45 42 L 54 42 L 67 72 L 80 42 L 89 42 L 89 88 L 81 88 L 81 55 L 70 81 L 64 81 L 53 55 L 53 88 Z" fill="#FFFFFF"/>
+    
+    <!-- o with circumflex in orange -->
+    <g id="letter-o">
+      <!-- circumflex accent -->
+      <path d="M 103 36 L 110 30 L 117 36" stroke="url(#orangeGrad)" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+      <!-- o circle -->
+      <ellipse cx="110" cy="65" rx="14" ry="17" fill="url(#orangeGrad)"/>
+      <ellipse cx="110" cy="65" rx="7" ry="10" fill="#075073"/>
+    </g>
+
+    <!-- n in orange -->
+    <g id="letter-n">
+      <!-- top curve accent -->
+      <path d="M 132 46 Q 139 42 146 47" stroke="url(#orangeGrad)" stroke-width="2.5" stroke-linecap="round" fill="none"/>
+      <path d="M 130 52 L 130 82 L 137 82 L 137 62 Q 137 54 146 54 Q 153 54 153 62 L 153 82 L 160 82 L 160 61 Q 160 48 147 48 Q 138 48 135 53 L 135 52 Z" fill="url(#orangeGrad)"/>
+    </g>
+
+    <!-- The iconic smile arc connecting o and n -->
+    <path d="M 98 84 Q 126 102 155 84" stroke="url(#orangeGrad)" stroke-width="4.5" stroke-linecap="round" fill="none"/>
+
+    <!-- g with elegant descender loop -->
+    <g id="letter-g">
+      <path d="M 190 50 Q 183 48 174 48 Q 163 48 163 65 Q 163 82 175 82 Q 183 82 188 77 L 188 88 Q 188 106 172 106 Q 164 106 160 101 L 157 106 Q 163 112 173 112 Q 195 112 195 86 L 195 50 Z M 188 64 L 188 71 Q 185 76 177 76 Q 170 76 170 65 Q 170 54 177 54 Q 185 54 188 64 Z" fill="#FFFFFF"/>
+      <circle cx="172" cy="106" r="4.5" fill="#FFFFFF"/>
+    </g>
+
+    <!-- l -->
+    <path d="M 203 36 L 203 82 L 210 82 L 210 36 Z" fill="#FFFFFF"/>
+
+    <!-- i with crescent moon in orange -->
+    <g id="letter-i">
+      <path d="M 221 34 Q 224 37 228 35 Q 226 40 221 40 Q 218 40 216 37 Q 219 35 221 34 Z" fill="url(#orangeGrad)"/>
+      <path d="M 218 50 L 218 82 L 225 82 L 225 50 Z" fill="#FFFFFF"/>
+    </g>
+
+    <!-- s -->
+    <path d="M 235 76 Q 237 82 245 82 Q 252 82 252 76 Q 252 71 243 69 Q 233 66 233 58 Q 233 48 244 48 Q 251 48 256 53 L 253 58 Q 249 54 244 54 Q 238 54 238 58 Q 238 62 247 64 Q 258 67 258 76 Q 258 87 245 87 Q 237 87 231 80 Z" fill="#FFFFFF"/>
+
+    <!-- h -->
+    <path d="M 267 36 L 267 82 L 274 82 L 274 62 Q 274 54 282 54 Q 289 54 289 62 L 289 82 L 296 82 L 296 61 Q 296 48 283 48 Q 275 48 272 53 L 272 36 Z" fill="#FFFFFF"/>
+  </g>
+
+  <!-- Subtitle: International Academy -->
+  <text x="45" y="112" fill="#FFFFFF" font-family="system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="16.5" font-weight="600" letter-spacing="4.5">
+    International  Academy
+  </text>
+</svg>

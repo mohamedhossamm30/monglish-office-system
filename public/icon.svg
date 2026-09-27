@@ -1,0 +1,167 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <defs>
+    <!-- Background Gradients -->
+    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#095a82"/>
+      <stop offset="45%" stop-color="#075073"/>
+      <stop offset="100%" stop-color="#02141e"/>
+    </linearGradient>
+
+    <!-- Warm Orange Brand Accent Gradient -->
+    <linearGradient id="orangeGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#FFA24C"/>
+      <stop offset="50%" stop-color="#FF8A29"/>
+      <stop offset="100%" stop-color="#D96E1E"/>
+    </linearGradient>
+
+    <!-- Golden Metallic Glow -->
+    <linearGradient id="goldGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#FFE8B3"/>
+      <stop offset="50%" stop-color="#FFD166"/>
+      <stop offset="100%" stop-color="#E68131"/>
+    </linearGradient>
+
+    <!-- Badge Ribbon Gradient -->
+    <linearGradient id="badgeGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#E68131"/>
+      <stop offset="50%" stop-color="#FF993B"/>
+      <stop offset="100%" stop-color="#E68131"/>
+    </linearGradient>
+
+    <!-- Office Tower Glass Gradient -->
+    <linearGradient id="towerGlassGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#FFFFFF" stop-opacity="0.18"/>
+      <stop offset="100%" stop-color="#075073" stop-opacity="0.05"/>
+    </linearGradient>
+
+    <!-- Drop Shadows -->
+    <filter id="glowShadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="8" stdDeviation="12" flood-color="#000000" flood-opacity="0.45"/>
+    </filter>
+    <filter id="accentGlow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="4" stdDeviation="6" flood-color="#E68131" flood-opacity="0.5"/>
+    </filter>
+
+    <!-- Architectural Grid Background Pattern -->
+    <pattern id="archGrid" width="32" height="32" patternUnits="userSpaceOnUse">
+      <path d="M 32 0 L 0 0 0 32" fill="none" stroke="#FFFFFF" stroke-width="1" stroke-opacity="0.05"/>
+      <circle cx="32" cy="0" r="1.5" fill="#FFFFFF" fill-opacity="0.1"/>
+    </pattern>
+  </defs>
+
+  <!-- Base App Background with Rounded Corners -->
+  <rect width="512" height="512" rx="112" fill="url(#bgGrad)"/>
+  <rect width="512" height="512" rx="112" fill="url(#archGrid)"/>
+
+  <!-- Radial Glow from Center -->
+  <circle cx="256" cy="210" r="180" fill="#0c6b99" opacity="0.25"/>
+
+  <!-- Outer Double Border Ring with Brand Orange Accent -->
+  <rect x="20" y="20" width="472" height="472" rx="92" fill="none" stroke="#FFFFFF" stroke-opacity="0.1" stroke-width="2"/>
+  <rect x="26" y="26" width="460" height="460" rx="86" fill="none" stroke="url(#orangeGrad)" stroke-opacity="0.45" stroke-width="3.5"/>
+
+  <!-- BACKGROUND OFFICE TOWERS & ARCHITECTURE (Visual Office Representation) -->
+  <g opacity="0.35">
+    <!-- Left Wing Office Building -->
+    <rect x="110" y="160" width="60" height="150" rx="6" fill="url(#towerGlassGrad)" stroke="#FFFFFF" stroke-width="1.5" stroke-opacity="0.25"/>
+    <line x1="125" y1="175" x2="155" y2="175" stroke="#FFFFFF" stroke-opacity="0.3" stroke-width="2"/>
+    <line x1="125" y1="195" x2="155" y2="195" stroke="#FFFFFF" stroke-opacity="0.3" stroke-width="2"/>
+    <line x1="125" y1="215" x2="155" y2="215" stroke="#FFFFFF" stroke-opacity="0.3" stroke-width="2"/>
+    <line x1="125" y1="235" x2="155" y2="235" stroke="#FFFFFF" stroke-opacity="0.3" stroke-width="2"/>
+    <line x1="125" y1="255" x2="155" y2="255" stroke="#FFFFFF" stroke-opacity="0.3" stroke-width="2"/>
+    <line x1="125" y1="275" x2="155" y2="275" stroke="#FFFFFF" stroke-opacity="0.3" stroke-width="2"/>
+
+    <!-- Right Wing Office Building -->
+    <rect x="342" y="160" width="60" height="150" rx="6" fill="url(#towerGlassGrad)" stroke="#FFFFFF" stroke-width="1.5" stroke-opacity="0.25"/>
+    <line x1="357" y1="175" x2="387" y2="175" stroke="#FFFFFF" stroke-opacity="0.3" stroke-width="2"/>
+    <line x1="357" y1="195" x2="387" y2="195" stroke="#FFFFFF" stroke-opacity="0.3" stroke-width="2"/>
+    <line x1="357" y1="215" x2="387" y2="215" stroke="#FFFFFF" stroke-opacity="0.3" stroke-width="2"/>
+    <line x1="357" y1="235" x2="387" y2="235" stroke="#FFFFFF" stroke-opacity="0.3" stroke-width="2"/>
+    <line x1="357" y1="255" x2="387" y2="255" stroke="#FFFFFF" stroke-opacity="0.3" stroke-width="2"/>
+    <line x1="357" y1="275" x2="387" y2="275" stroke="#FFFFFF" stroke-opacity="0.3" stroke-width="2"/>
+  </g>
+
+  <!-- CENTRAL MONGLISH EMBLEM SHIELD & "M" -->
+  <g filter="url(#glowShadow)">
+    <!-- Behind "M" circular glass disc -->
+    <circle cx="256" cy="195" r="118" fill="#042333" fill-opacity="0.75" stroke="#FFFFFF" stroke-opacity="0.15" stroke-width="2"/>
+    <circle cx="256" cy="195" r="110" fill="none" stroke="url(#orangeGrad)" stroke-opacity="0.3" stroke-width="1.5" stroke-dasharray="8 6"/>
+
+    <!-- Top Star of Excellence (Monglish Crest) -->
+    <g transform="translate(256, 102)" filter="url(#accentGlow)">
+      <polygon points="0,-16 4,-4 16,0 4,4 0,16 -4,4 -16,0 -4,-4" fill="url(#goldGrad)"/>
+      <circle cx="0" cy="0" r="3" fill="#FFFFFF"/>
+    </g>
+
+    <!-- Stylized Elegant Monglish "M" -->
+    <path d="M 172 245 L 172 138 L 198 138 L 256 215 L 314 138 L 340 138 L 340 245 L 312 245 L 312 172 L 268 230 L 244 230 L 200 172 L 200 245 Z" 
+          fill="#FFFFFF" 
+          filter="url(#glowShadow)"/>
+
+    <!-- Dynamic Orange Smile / Foundation Arc -->
+    <path d="M 166 260 Q 256 308 346 260" 
+          stroke="url(#orangeGrad)" 
+          stroke-width="14" 
+          stroke-linecap="round" 
+          fill="none" 
+          filter="url(#accentGlow)"/>
+
+    <!-- Sparkle highlights on M -->
+    <circle cx="256" cy="226" r="3.5" fill="#FFD166"/>
+  </g>
+
+  <!-- OFFICE & OPERATIONS BADGE / RIBBON (Lower Section) -->
+  <g transform="translate(0, 310)" filter="url(#glowShadow)">
+    <!-- Badge Background Plaque -->
+    <rect x="76" y="32" width="360" height="96" rx="24" fill="#031824" stroke="url(#orangeGrad)" stroke-width="2.5"/>
+    <rect x="82" y="38" width="348" height="84" rx="18" fill="url(#bgGrad)" fill-opacity="0.85"/>
+
+    <!-- Small Office Icon Emblem on Left/Right of badge -->
+    <g transform="translate(108, 80)" fill="url(#orangeGrad)">
+      <!-- Mini Office/Dashboard Grid Icon -->
+      <rect x="-12" y="-12" width="10" height="10" rx="2"/>
+      <rect x="2" y="-12" width="10" height="10" rx="2"/>
+      <rect x="-12" y="2" width="10" height="10" rx="2"/>
+      <rect x="2" y="2" width="10" height="10" rx="2"/>
+    </g>
+    <g transform="translate(404, 80)" fill="url(#orangeGrad)">
+      <!-- Mini Shield / Operations Check Icon -->
+      <path d="M 0 -14 L 12 -8 L 12 2 C 12 10 0 16 0 16 C 0 16 -12 10 -12 2 L -12 -8 Z" fill="none" stroke="url(#orangeGrad)" stroke-width="2.5"/>
+      <path d="M -4 1 L -1 4 L 5 -2" stroke="#FFFFFF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+    </g>
+
+    <!-- Main Title: إدارة المكتب -->
+    <text x="256" y="74" 
+          text-anchor="middle" 
+          fill="#FFFFFF" 
+          font-family="'Cairo', 'Segoe UI', system-ui, sans-serif" 
+          font-size="26" 
+          font-weight="900" 
+          letter-spacing="0.5">
+      إدارة المكتب
+    </text>
+
+    <!-- Subtitle: MONGLISH OFFICE MANAGEMENT -->
+    <text x="256" y="104" 
+          text-anchor="middle" 
+          fill="#FF9E42" 
+          font-family="'IBM Plex Mono', 'Segoe UI', monospace, sans-serif" 
+          font-size="12" 
+          font-weight="700" 
+          letter-spacing="2.5">
+      OFFICE &amp; OPERATIONS
+    </text>
+  </g>
+
+  <!-- Small Academy Top Title (Curved / Crisp) -->
+  <text x="256" y="74" 
+        text-anchor="middle" 
+        fill="#FFFFFF" 
+        fill-opacity="0.75" 
+        font-family="'Cairo', system-ui, sans-serif" 
+        font-size="13" 
+        font-weight="700" 
+        letter-spacing="3">
+    MÔNGLISH ACADEMY
+  </text>
+</svg>

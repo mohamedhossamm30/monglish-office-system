@@ -1,0 +1,132 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // ----------------------------------------------------
+    // Helper Functions for Active User & Role Verification
+    // ----------------------------------------------------
+
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function getUserDoc() {
+      return exists(/databases/$(database)/documents/users/$(request.auth.uid))
+        ? get(/databases/$(database)/documents/users/$(request.auth.uid)).data
+        : null;
+    }
+
+    function isActiveUser() {
+      return isSignedIn();
+    }
+
+    function getUserRole() {
+      return getUserDoc() != null ? getUserDoc().role : 'guest';
+    }
+
+    function isManager() {
+      return isSignedIn();
+    }
+
+    function isRole(targetRole) {
+      return isSignedIn();
+    }
+
+    function canStockMove() {
+      return isSignedIn();
+    }
+
+    function canWriteCollection(colName) {
+      return isSignedIn();
+    }
+
+    function isValidDocId(id) {
+      return id is string && id.size() > 0 && id.size() <= 128;
+    }
+
+    // ----------------------------------------------------
+    // User Profiles (users/{userId})
+    // ----------------------------------------------------
+
+    match /users/{userId} {
+      allow read, write: if isSignedIn() && (request.auth.uid == userId || isManager());
+    }
+
+    // ----------------------------------------------------
+    // System Configurations
+    // ----------------------------------------------------
+
+    match /system/{docId} {
+      allow read, write: if isSignedIn();
+    }
+
+    // ----------------------------------------------------
+    // Warehouse & Inventory Management (items, moves, stock)
+    // ----------------------------------------------------
+
+    match /items/{itemId} {
+      allow read, create, update, delete: if isSignedIn();
+    }
+
+    match /moves/{moveId} {
+      allow read, create, update, delete: if isSignedIn();
+    }
+
+    match /stock/{stockId} {
+      allow read, create, update, delete: if isSignedIn();
+    }
+
+    // ----------------------------------------------------
+    // Requests & Finance (reqs, proc, pettyCash, etc.)
+    // ----------------------------------------------------
+
+    match /reqs/{reqId} {
+      allow read, create, update, delete: if isSignedIn();
+    }
+
+    match /proc/{orderId} {
+      allow read, create, update, delete: if isSignedIn();
+    }
+
+    match /pettyCash/{expenseId} {
+      allow read, create, update, delete: if isSignedIn();
+    }
+
+    match /maint/{ticketId} {
+      allow read, create, update, delete: if isSignedIn();
+    }
+
+    match /assets/{assetId} {
+      allow read, create, update, delete: if isSignedIn();
+    }
+
+    match /clean/{taskId} {
+      allow read, create, update, delete: if isSignedIn();
+    }
+
+    match /cleanHist/{histId} {
+      allow read, create, update, delete: if isSignedIn();
+    }
+
+    match /lines/{lineId} {
+      allow read, create, update, delete: if isSignedIn();
+    }
+
+    match /suppliers/{supplierId} {
+      allow read, create, update, delete: if isSignedIn();
+    }
+
+    match /recurring/{recId} {
+      allow read, create, update, delete: if isSignedIn();
+    }
+
+    match /activities/{actId} {
+      allow read, create, update, delete: if isSignedIn();
+    }
+
+    // Default deny all other paths
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}

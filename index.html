@@ -1,0 +1,86 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+  <head>
+    <script>
+      // Suppress benign [vite] HMR/WebSocket logs, errors and connections in sandboxed preview
+      (function() {
+        function isViteHmr(arg) {
+          if (!arg) return false;
+          var s = typeof arg === 'string' ? arg : (arg.message || arg.stack || String(arg));
+          return s.indexOf('[vite]') !== -1 || s.indexOf('WebSocket') !== -1 || s.indexOf('vite:') !== -1;
+        }
+        ['log', 'info', 'warn', 'error', 'debug'].forEach(function(method) {
+          var orig = console[method];
+          console[method] = function() {
+            for (var i = 0; i < arguments.length; i++) {
+              if (isViteHmr(arguments[i])) return;
+            }
+            orig.apply(console, arguments);
+          };
+        });
+        var RealWebSocket = window.WebSocket;
+        if (RealWebSocket) {
+          window.WebSocket = function(url, protocols) {
+            if (protocols === 'vite-hmr' || (typeof url === 'string' && (url.indexOf('vite-hmr') !== -1 || url.indexOf('token=') !== -1))) {
+              return {
+                url: url,
+                readyState: 3,
+                send: function() {},
+                close: function() {},
+                addEventListener: function() {},
+                removeEventListener: function() {},
+                dispatchEvent: function() { return false; },
+                onopen: null,
+                onclose: null,
+                onerror: null,
+                onmessage: null
+              };
+            }
+            return new RealWebSocket(url, protocols);
+          };
+          window.WebSocket.prototype = RealWebSocket.prototype;
+        }
+        window.addEventListener('error', function(e) {
+          if (isViteHmr(e.message) || isViteHmr(e.filename) || isViteHmr(e.error)) {
+            e.stopImmediatePropagation();
+            e.preventDefault();
+          }
+        }, true);
+        window.addEventListener('unhandledrejection', function(e) {
+          if (isViteHmr(e.reason)) {
+            e.stopImmediatePropagation();
+            e.preventDefault();
+          }
+        }, true);
+      })();
+    </script>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+    <title>نظام إدارة المكتب — مونجلش</title>
+    <meta name="description" content="نظام إدارة المكتب الشامل لأكاديمية مونجلش الدولية - مقر الإسكندرية (المخازن، المشتريات، الصيانة، البوفيه، النظافة، خطوط الموبايل، التكاليف والأداء)" />
+    <meta property="og:title" content="نظام إدارة المكتب — مونجلش" />
+    <meta property="og:description" content="نظام إدارة المكتب الشامل لأكاديمية مونجلش الدولية - مقر الإسكندرية" />
+    <meta property="og:type" content="website" />
+    <meta name="theme-color" content="#075073" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="apple-mobile-web-app-title" content="إدارة المكتب" />
+    <link rel="icon" type="image/svg+xml" href="/icon.svg" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;800;900&family=IBM+Plex+Mono:wght@500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+    <script>
+      if (typeof window !== 'undefined' && window.pdfjsLib) {
+        window.pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+      }
+    </script>
+  </head>
+  <body class="bg-[#f7f3eb] text-[#1c2030] antialiased">
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>
+

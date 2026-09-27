@@ -1,0 +1,111 @@
+@import "tailwindcss";
+
+@theme {
+  --color-brand-navy-light: #075073;
+  --color-brand-navy-dark: #03151F;
+  --color-brand-navy: #075073;
+  --color-brand-accent: #E68131;
+  --color-brand-accent-hover: #d06f23;
+}
+
+:root {
+  --brand-navy-from: #075073;
+  --brand-navy-to: #03151F;
+  --brand-accent: #E68131;
+  --brand-accent-hover: #d06f23;
+}
+
+/* Academy Brand Gradients & Styling (Navy Gradient #075073 to #03151F | Accent #E68131) */
+.bg-brand-gradient {
+  background: linear-gradient(135deg, #075073 0%, #03151F 100%);
+}
+
+.bg-brand-gradient-h {
+  background: linear-gradient(90deg, #075073 0%, #03151F 100%);
+}
+
+.bg-brand-navy {
+  background-color: #075073;
+}
+
+.bg-brand-dark {
+  background-color: #03151F;
+}
+
+.text-brand-navy {
+  color: #075073;
+}
+
+.text-brand-accent {
+  color: #E68131;
+}
+
+.bg-brand-accent {
+  background-color: #E68131;
+}
+
+.border-brand-accent {
+  border-color: #E68131;
+}
+
+@layer base {
+  body {
+    font-family: 'Cairo', system-ui, -apple-system, sans-serif;
+    background-color: #f7f3eb;
+    color: #1c2030;
+    -webkit-font-smoothing: antialiased;
+  }
+  
+  .font-mono {
+    font-family: 'IBM Plex Mono', monospace;
+  }
+}
+
+@keyframes subtleFadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.fade-in-entry {
+  animation: subtleFadeIn 0.2s ease-out forwards;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: #dcd6c8;
+  border-radius: 9999px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #c5beae;
+}
+
+@media print {
+  body {
+    background-color: #ffffff !important;
+    color: #000000 !important;
+  }
+
+  header, aside, #firestore-quota-banner, .print\:hidden {
+    display: none !important;
+  }
+
+  #printable-voucher-content {
+    display: block !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    border: none !important;
+  }
+}

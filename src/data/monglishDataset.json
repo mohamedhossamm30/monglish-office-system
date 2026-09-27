@@ -1,0 +1,3237 @@
+[
+  {
+    "id": "item_1",
+    "code": "OFF-01",
+    "name": "تليفون ارضى",
+    "cat": "OFF",
+    "unit": "عدد",
+    "balance": 5,
+    "min": 5,
+    "cost": 25
+  },
+  {
+    "id": "item_2",
+    "code": "OFF-02",
+    "name": "مصحف",
+    "cat": "OFF",
+    "unit": "عدد",
+    "balance": 2,
+    "min": 5,
+    "cost": 25
+  },
+  {
+    "id": "item_3",
+    "code": "OFF-03",
+    "name": "اذكار الصباح و المساء",
+    "cat": "OFF",
+    "unit": "عدد",
+    "balance": 3,
+    "min": 5,
+    "cost": 25
+  },
+  {
+    "id": "item_4",
+    "code": "OFF-04",
+    "name": "علبة خشب Monglish",
+    "cat": "OFF",
+    "unit": "عدد",
+    "balance": 3,
+    "min": 5,
+    "cost": 25
+  },
+  {
+    "id": "item_5",
+    "code": "OFF-05",
+    "name": "بطاريات وسط",
+    "cat": "OFF",
+    "unit": "عدد",
+    "balance": 8,
+    "min": 5,
+    "cost": 25
+  },
+  {
+    "id": "item_6",
+    "code": "OFF-06",
+    "name": "سولتيب صغير",
+    "cat": "OFF",
+    "unit": "عدد",
+    "balance": 13,
+    "min": 5,
+    "cost": 25
+  },
+  {
+    "id": "item_7",
+    "code": "OFF-07",
+    "name": "تاج نيم",
+    "cat": "OFF",
+    "unit": "عدد",
+    "balance": 34,
+    "min": 5,
+    "cost": 25
+  },
+  {
+    "id": "item_8",
+    "code": "OFF-08",
+    "name": "تاج نيم ( زائر )",
+    "cat": "OFF",
+    "unit": "عدد",
+    "balance": 5,
+    "min": 5,
+    "cost": 25
+  },
+  {
+    "id": "item_9",
+    "code": "OFF-09",
+    "name": "فلاشة ميداليه Monglish",
+    "cat": "OFF",
+    "unit": "عدد",
+    "balance": 0,
+    "min": 5,
+    "cost": 25
+  },
+  {
+    "id": "item_10",
+    "code": "OFF-10",
+    "name": "مج حرارى Monglish",
+    "cat": "OFF",
+    "unit": "عدد",
+    "balance": 2,
+    "min": 5,
+    "cost": 25
+  },
+  {
+    "id": "item_11",
+    "code": "OFF-11",
+    "name": "سلك تليفون ارضى",
+    "cat": "OFF",
+    "unit": "عدد",
+    "balance": 2,
+    "min": 5,
+    "cost": 25
+  },
+  {
+    "id": "item_12",
+    "code": "OFF-12",
+    "name": "ريموت Mp3",
+    "cat": "OFF",
+    "unit": "عدد",
+    "balance": 2,
+    "min": 5,
+    "cost": 25
+  },
+  {
+    "id": "item_13",
+    "code": "OFF-13",
+    "name": "بطاريات دائرى",
+    "cat": "OFF",
+    "unit": "عدد",
+    "balance": 8,
+    "min": 5,
+    "cost": 25
+  },
+  {
+    "id": "item_14",
+    "code": "OFF-14",
+    "name": "بطاريات قلم",
+    "cat": "OFF",
+    "unit": "عدد",
+    "balance": 7,
+    "min": 5,
+    "cost": 8
+  },
+  {
+    "id": "item_15",
+    "code": "OFF-15",
+    "name": "ظرف كبير A4",
+    "cat": "OFF",
+    "unit": "عدد",
+    "balance": 51,
+    "min": 5,
+    "cost": 25
+  },
+  {
+    "id": "item_16",
+    "code": "OFF-16",
+    "name": "علبة ميدالية بلاستيك 36 قطعة",
+    "cat": "OFF",
+    "unit": "عدد",
+    "balance": 2,
+    "min": 5,
+    "cost": 25
+  },
+  {
+    "id": "item_17",
+    "code": "OFF-17",
+    "name": "كيس استيك",
+    "cat": "OFF",
+    "unit": "عدد",
+    "balance": 2,
+    "min": 5,
+    "cost": 25
+  },
+  {
+    "id": "item_18",
+    "code": "OFF-18",
+    "name": "باكيت ظرف صغير 50 ظرف",
+    "cat": "OFF",
+    "unit": "عدد",
+    "balance": 3,
+    "min": 5,
+    "cost": 25
+  },
+  {
+    "id": "item_19",
+    "code": "OFF-19",
+    "name": "كوستر",
+    "cat": "OFF",
+    "unit": "عدد",
+    "balance": 3,
+    "min": 5,
+    "cost": 25
+  },
+  {
+    "id": "item_20",
+    "code": "OFF-20",
+    "name": "شريط ترقيم للكتب",
+    "cat": "OFF",
+    "unit": "عدد",
+    "balance": 7,
+    "min": 5,
+    "cost": 25
+  },
+  {
+    "id": "item_21",
+    "code": "OFF-21",
+    "name": "ميدالية خشب",
+    "cat": "OFF",
+    "unit": "عدد",
+    "balance": 6,
+    "min": 5,
+    "cost": 25
+  },
+  {
+    "id": "item_22",
+    "code": "OFF-22",
+    "name": "علبة خشب مناديل Monglish",
+    "cat": "OFF",
+    "unit": "عدد",
+    "balance": 1,
+    "min": 15,
+    "cost": 25
+  },
+  {
+    "id": "item_23",
+    "code": "OFF-23",
+    "name": "شنطة Monglish",
+    "cat": "OFF",
+    "unit": "عدد",
+    "balance": 16,
+    "min": 5,
+    "cost": 25
+  },
+  {
+    "id": "item_24",
+    "code": "OFF-24",
+    "name": "قرص ريد للحشرات",
+    "cat": "OFF",
+    "unit": "عدد",
+    "balance": 15,
+    "min": 5,
+    "cost": 25
+  },
+  {
+    "id": "item_25",
+    "code": "OFF-25",
+    "name": "دوسية جلد",
+    "cat": "OFF",
+    "unit": "عدد",
+    "balance": 1,
+    "min": 5,
+    "cost": 25
+  },
+  {
+    "id": "item_26",
+    "code": "OFF-26",
+    "name": "مقلمة Monglish",
+    "cat": "OFF",
+    "unit": "عدد",
+    "balance": 0,
+    "min": 5,
+    "cost": 8
+  },
+  {
+    "id": "item_27",
+    "code": "OFF-27",
+    "name": "سبحة الكترونية",
+    "cat": "OFF",
+    "unit": "عدد",
+    "balance": 2,
+    "min": 5,
+    "cost": 25
+  },
+  {
+    "id": "item_28",
+    "code": "OFF-28",
+    "name": "ظرف كبير  Monglsih A4",
+    "cat": "OFF",
+    "unit": "عدد",
+    "balance": 217,
+    "min": 5,
+    "cost": 25
+  },
+  {
+    "id": "item_29",
+    "code": "OFF-29",
+    "name": "ورق لوجو Monglish",
+    "cat": "OFF",
+    "unit": "عدد",
+    "balance": 137,
+    "min": 5,
+    "cost": 25
+  },
+  {
+    "id": "item_30",
+    "code": "OFF-30",
+    "name": "بارشور Monglish",
+    "cat": "OFF",
+    "unit": "عدد",
+    "balance": 42,
+    "min": 5,
+    "cost": 25
+  },
+  {
+    "id": "item_31",
+    "code": "OFF-31",
+    "name": "نوت بوك كبير",
+    "cat": "OFF",
+    "unit": "عدد",
+    "balance": 22,
+    "min": 5,
+    "cost": 25
+  },
+  {
+    "id": "item_32",
+    "code": "OFF-32",
+    "name": "جومة",
+    "cat": "OFF",
+    "unit": "عدد",
+    "balance": 1,
+    "min": 5,
+    "cost": 25
+  },
+  {
+    "id": "item_33",
+    "code": "OFF-33",
+    "name": "علبة دبابيس صغيره",
+    "cat": "OFF",
+    "unit": "عدد",
+    "balance": 18,
+    "min": 5,
+    "cost": 25
+  },
+  {
+    "id": "item_34",
+    "code": "OFF-34",
+    "name": "قلم اسود",
+    "cat": "OFF",
+    "unit": "عدد",
+    "balance": 47,
+    "min": 5,
+    "cost": 8
+  },
+  {
+    "id": "item_35",
+    "code": "OFF-35",
+    "name": "قلم اخضر",
+    "cat": "OFF",
+    "unit": "عدد",
+    "balance": 3,
+    "min": 5,
+    "cost": 8
+  },
+  {
+    "id": "item_36",
+    "code": "OFF-36",
+    "name": "قلم رصاص",
+    "cat": "OFF",
+    "unit": "عدد",
+    "balance": 16,
+    "min": 5,
+    "cost": 8
+  },
+  {
+    "id": "item_37",
+    "code": "OFF-37",
+    "name": "دباسة كبيره",
+    "cat": "OFF",
+    "unit": "عدد",
+    "balance": 1,
+    "min": 5,
+    "cost": 25
+  },
+  {
+    "id": "item_38",
+    "code": "OFF-38",
+    "name": "قلم ازرق",
+    "cat": "OFF",
+    "unit": "عدد",
+    "balance": 12,
+    "min": 5,
+    "cost": 8
+  },
+  {
+    "id": "item_39",
+    "code": "OFF-39",
+    "name": "قلم ازرق Monglish",
+    "cat": "OFF",
+    "unit": "عدد",
+    "balance": 2,
+    "min": 5,
+    "cost": 8
+  },
+  {
+    "id": "item_40",
+    "code": "OFF-40",
+    "name": "قلم احمر",
+    "cat": "OFF",
+    "unit": "عدد",
+    "balance": 49,
+    "min": 5,
+    "cost": 8
+  },
+  {
+    "id": "item_41",
+    "code": "OFF-41",
+    "name": "قلم سابوره ازرق",
+    "cat": "OFF",
+    "unit": "عدد",
+    "balance": 4,
+    "min": 5,
+    "cost": 8
+  },
+  {
+    "id": "item_42",
+    "code": "OFF-42",
+    "name": "قلم سابوره اسود",
+    "cat": "OFF",
+    "unit": "عدد",
+    "balance": 1,
+    "min": 5,
+    "cost": 8
+  },
+  {
+    "id": "item_43",
+    "code": "OFF-43",
+    "name": "قلم سابوره اخضر",
+    "cat": "OFF",
+    "unit": "عدد",
+    "balance": 9,
+    "min": 5,
+    "cost": 8
+  },
+  {
+    "id": "item_44",
+    "code": "OFF-44",
+    "name": "قلم سابوره احمر",
+    "cat": "OFF",
+    "unit": "عدد",
+    "balance": 7,
+    "min": 5,
+    "cost": 8
+  },
+  {
+    "id": "item_45",
+    "code": "OFF-45",
+    "name": "حامل اقلام معدن",
+    "cat": "OFF",
+    "unit": "عدد",
+    "balance": 13,
+    "min": 5,
+    "cost": 25
+  },
+  {
+    "id": "item_46",
+    "code": "OFF-46",
+    "name": "علبة دبابيس كبيرة",
+    "cat": "OFF",
+    "unit": "عدد",
+    "balance": 4,
+    "min": 5,
+    "cost": 25
+  },
+  {
+    "id": "item_47",
+    "code": "OFF-47",
+    "name": "خالع دبابيس",
+    "cat": "OFF",
+    "unit": "عدد",
+    "balance": 3,
+    "min": 5,
+    "cost": 25
+  },
+  {
+    "id": "item_48",
+    "code": "OFF-48",
+    "name": "ستيكى نوت",
+    "cat": "OFF",
+    "unit": "عدد",
+    "balance": 23,
+    "min": 5,
+    "cost": 25
+  },
+  {
+    "id": "item_49",
+    "code": "OFF-49",
+    "name": "اوراق وراقة",
+    "cat": "OFF",
+    "unit": "عدد",
+    "balance": 9,
+    "min": 5,
+    "cost": 25
+  },
+  {
+    "id": "item_50",
+    "code": "OFF-50",
+    "name": "مسطره معدن",
+    "cat": "OFF",
+    "unit": "عدد",
+    "balance": 3,
+    "min": 5,
+    "cost": 25
+  },
+  {
+    "id": "item_51",
+    "code": "OFF-51",
+    "name": "انبوبة امير",
+    "cat": "OFF",
+    "unit": "عدد",
+    "balance": 7,
+    "min": 5,
+    "cost": 25
+  },
+  {
+    "id": "item_52",
+    "code": "OFF-52",
+    "name": "كوريكتور",
+    "cat": "OFF",
+    "unit": "عدد",
+    "balance": 9,
+    "min": 5,
+    "cost": 25
+  },
+  {
+    "id": "item_53",
+    "code": "OFF-53",
+    "name": "نوت بوك صغير سلك",
+    "cat": "OFF",
+    "unit": "عدد",
+    "balance": 36,
+    "min": 5,
+    "cost": 25
+  },
+  {
+    "id": "item_54",
+    "code": "OFF-54",
+    "name": "نوت بوك صغير + قلم",
+    "cat": "OFF",
+    "unit": "عدد",
+    "balance": 0,
+    "min": 5,
+    "cost": 8
+  },
+  {
+    "id": "item_55",
+    "code": "OFF-55",
+    "name": "ستيكر كيبورد",
+    "cat": "OFF",
+    "unit": "عدد",
+    "balance": 3,
+    "min": 5,
+    "cost": 25
+  },
+  {
+    "id": "item_56",
+    "code": "OFF-56",
+    "name": "قلم هايلايتر",
+    "cat": "OFF",
+    "unit": "عدد",
+    "balance": 8,
+    "min": 5,
+    "cost": 8
+  },
+  {
+    "id": "item_57",
+    "code": "OFF-57",
+    "name": "لافتة باب",
+    "cat": "OFF",
+    "unit": "عدد",
+    "balance": 5,
+    "min": 5,
+    "cost": 25
+  },
+  {
+    "id": "item_58",
+    "code": "OFF-58",
+    "name": "دوسية اوراق كبير + مشابك دوسية",
+    "cat": "OFF",
+    "unit": "عدد",
+    "balance": 7,
+    "min": 5,
+    "cost": 25
+  },
+  {
+    "id": "item_59",
+    "code": "OFF-59",
+    "name": "شميز شفاف",
+    "cat": "OFF",
+    "unit": "عدد",
+    "balance": 100,
+    "min": 5,
+    "cost": 25
+  },
+  {
+    "id": "item_60",
+    "code": "OFF-60",
+    "name": "ورق ترقيم A4 فاصل",
+    "cat": "OFF",
+    "unit": "عدد",
+    "balance": 4,
+    "min": 5,
+    "cost": 25
+  },
+  {
+    "id": "item_61",
+    "code": "OFF-61",
+    "name": "دوسية بلاستيك بكلبس",
+    "cat": "OFF",
+    "unit": "عدد",
+    "balance": 7,
+    "min": 5,
+    "cost": 25
+  },
+  {
+    "id": "item_62",
+    "code": "OFF-62",
+    "name": "سكوتش كبير",
+    "cat": "OFF",
+    "unit": "عدد",
+    "balance": 7,
+    "min": 5,
+    "cost": 25
+  },
+  {
+    "id": "item_63",
+    "code": "OFF-63",
+    "name": "بادة ماوس",
+    "cat": "OFF",
+    "unit": "عدد",
+    "balance": 2,
+    "min": 5,
+    "cost": 25
+  },
+  {
+    "id": "item_64",
+    "code": "OFF-64",
+    "name": "دوسية بشميزات",
+    "cat": "OFF",
+    "unit": "عدد",
+    "balance": 2,
+    "min": 5,
+    "cost": 25
+  },
+  {
+    "id": "item_65",
+    "code": "OFF-65",
+    "name": "دوسية كارتون",
+    "cat": "OFF",
+    "unit": "عدد",
+    "balance": 47,
+    "min": 5,
+    "cost": 25
+  },
+  {
+    "id": "item_66",
+    "code": "OFF-66",
+    "name": "ورق تصوير A5",
+    "cat": "OFF",
+    "unit": "عدد",
+    "balance": 200,
+    "min": 15,
+    "cost": 135
+  },
+  {
+    "id": "item_67",
+    "code": "OFF-67",
+    "name": "رزمة ورق تصوير A4",
+    "cat": "OFF",
+    "unit": "عدد",
+    "balance": 25,
+    "min": 15,
+    "cost": 135
+  },
+  {
+    "id": "item_68",
+    "code": "OFF-68",
+    "name": "زينه رمضان",
+    "cat": "OFF",
+    "unit": "عدد",
+    "balance": 0,
+    "min": 5,
+    "cost": 25
+  },
+  {
+    "id": "item_69",
+    "code": "OFF-69",
+    "name": "اكياس رمضان",
+    "cat": "OFF",
+    "unit": "عدد",
+    "balance": 1,
+    "min": 5,
+    "cost": 25
+  },
+  {
+    "id": "item_70",
+    "code": "OFF-70",
+    "name": "اوراق ذاتية اللصق",
+    "cat": "OFF",
+    "unit": "عدد",
+    "balance": 6,
+    "min": 5,
+    "cost": 25
+  },
+  {
+    "id": "item_71",
+    "code": "OFF-71",
+    "name": "برايات",
+    "cat": "OFF",
+    "unit": "عدد",
+    "balance": 4,
+    "min": 5,
+    "cost": 25
+  },
+  {
+    "id": "item_72",
+    "code": "OFF-72",
+    "name": "رزمة ورق تصوير A4 80 جم",
+    "cat": "OFF",
+    "unit": "عدد",
+    "balance": 1,
+    "min": 15,
+    "cost": 135
+  },
+  {
+    "id": "item_73",
+    "code": "OFF-73",
+    "name": "دوسيه شانون",
+    "cat": "OFF",
+    "unit": "عدد",
+    "balance": 0,
+    "min": 5,
+    "cost": 25
+  },
+  {
+    "id": "item_74",
+    "code": "OFF-74",
+    "name": "بخور",
+    "cat": "OFF",
+    "unit": "عدد",
+    "balance": 1,
+    "min": 5,
+    "cost": 25
+  },
+  {
+    "id": "item_75",
+    "code": "OFF-75",
+    "name": "فاميه حرارى",
+    "cat": "OFF",
+    "unit": "عدد",
+    "balance": 0,
+    "min": 5,
+    "cost": 25
+  },
+  {
+    "id": "item_76",
+    "code": "OFF-76",
+    "name": "ختامة",
+    "cat": "OFF",
+    "unit": "عدد",
+    "balance": 0,
+    "min": 5,
+    "cost": 25
+  },
+  {
+    "id": "item_77",
+    "code": "OFF-77",
+    "name": "سابوره بيضاء",
+    "cat": "OFF",
+    "unit": "عدد",
+    "balance": 0,
+    "min": 5,
+    "cost": 25
+  },
+  {
+    "id": "item_78",
+    "code": "OFF-78",
+    "name": "كرسى مكتب",
+    "cat": "OFF",
+    "unit": "عدد",
+    "balance": 0,
+    "min": 5,
+    "cost": 2500
+  },
+  {
+    "id": "item_79",
+    "code": "OFF-79",
+    "name": "علبة مناديل ايدوليكسا",
+    "cat": "OFF",
+    "unit": "عدد",
+    "balance": 5,
+    "min": 15,
+    "cost": 25
+  },
+  {
+    "id": "item_80",
+    "code": "OFF-80",
+    "name": "وحدة ادراج شانون",
+    "cat": "OFF",
+    "unit": "عدد",
+    "balance": 0,
+    "min": 5,
+    "cost": 25
+  },
+  {
+    "id": "item_81",
+    "code": "OFF-81",
+    "name": "سجادة مكتب",
+    "cat": "OFF",
+    "unit": "عدد",
+    "balance": 0,
+    "min": 5,
+    "cost": 25
+  },
+  {
+    "id": "item_82",
+    "code": "OFF-82",
+    "name": "دفتر صرف نقديه",
+    "cat": "OFF",
+    "unit": "عدد",
+    "balance": 0,
+    "min": 5,
+    "cost": 25
+  },
+  {
+    "id": "item_83",
+    "code": "OFF-83",
+    "name": "دفتر توريد نقديه",
+    "cat": "OFF",
+    "unit": "عدد",
+    "balance": 20,
+    "min": 5,
+    "cost": 25
+  },
+  {
+    "id": "item_84",
+    "code": "OFF-84",
+    "name": "دفتر امر شراء",
+    "cat": "OFF",
+    "unit": "عدد",
+    "balance": 0,
+    "min": 5,
+    "cost": 25
+  },
+  {
+    "id": "item_85",
+    "code": "OFF-85",
+    "name": "دفتر اضافة مخزن",
+    "cat": "OFF",
+    "unit": "عدد",
+    "balance": 10,
+    "min": 5,
+    "cost": 25
+  },
+  {
+    "id": "item_86",
+    "code": "OFF-86",
+    "name": "دفتر صرف مخزن",
+    "cat": "OFF",
+    "unit": "عدد",
+    "balance": 5,
+    "min": 5,
+    "cost": 25
+  },
+  {
+    "id": "item_87",
+    "code": "OFF-87",
+    "name": "اله حاسبه",
+    "cat": "OFF",
+    "unit": "عدد",
+    "balance": 1,
+    "min": 5,
+    "cost": 25
+  },
+  {
+    "id": "item_88",
+    "code": "OFF-88",
+    "name": "احبار للطابعه",
+    "cat": "OFF",
+    "unit": "عدد",
+    "balance": 12,
+    "min": 5,
+    "cost": 350
+  },
+  {
+    "id": "item_89",
+    "code": "MED-01",
+    "name": "ادوية - بنادول",
+    "cat": "MED",
+    "unit": "عدد",
+    "balance": 0,
+    "min": 5,
+    "cost": 25
+  },
+  {
+    "id": "item_90",
+    "code": "MED-02",
+    "name": "ادوية - دوليبران",
+    "cat": "MED",
+    "unit": "عدد",
+    "balance": 0,
+    "min": 5,
+    "cost": 25
+  },
+  {
+    "id": "item_91",
+    "code": "MED-03",
+    "name": "بنادول",
+    "cat": "MED",
+    "unit": "عدد",
+    "balance": 0,
+    "min": 5,
+    "cost": 25
+  },
+  {
+    "id": "item_92",
+    "code": "MED-04",
+    "name": "هيموكلار",
+    "cat": "MED",
+    "unit": "عدد",
+    "balance": 0,
+    "min": 5,
+    "cost": 25
+  },
+  {
+    "id": "item_93",
+    "code": "MED-05",
+    "name": "اسبوسيد",
+    "cat": "MED",
+    "unit": "عدد",
+    "balance": 0,
+    "min": 5,
+    "cost": 25
+  },
+  {
+    "id": "item_94",
+    "code": "MED-06",
+    "name": "جهاز ضغط",
+    "cat": "MED",
+    "unit": "عدد",
+    "balance": 0,
+    "min": 5,
+    "cost": 25
+  },
+  {
+    "id": "item_95",
+    "code": "ELEC-01",
+    "name": "شاحن type C",
+    "cat": "ELEC",
+    "unit": "عدد",
+    "balance": 3,
+    "min": 5,
+    "cost": 95
+  },
+  {
+    "id": "item_96",
+    "code": "ELEC-02",
+    "name": "رأس شاحن",
+    "cat": "ELEC",
+    "unit": "عدد",
+    "balance": 1,
+    "min": 5,
+    "cost": 95
+  },
+  {
+    "id": "item_97",
+    "code": "ELEC-03",
+    "name": "كابل type C",
+    "cat": "ELEC",
+    "unit": "عدد",
+    "balance": 2,
+    "min": 5,
+    "cost": 95
+  },
+  {
+    "id": "item_98",
+    "code": "ELEC-04",
+    "name": "موبايل Redmi 14C",
+    "cat": "ELEC",
+    "unit": "عدد",
+    "balance": 5,
+    "min": 5,
+    "cost": 5500
+  },
+  {
+    "id": "item_99",
+    "code": "ELEC-05",
+    "name": "موبايل Redmi 13C",
+    "cat": "ELEC",
+    "unit": "عدد",
+    "balance": -1,
+    "min": 5,
+    "cost": 5500
+  },
+  {
+    "id": "item_100",
+    "code": "ELEC-06",
+    "name": "موبايل infinix",
+    "cat": "ELEC",
+    "unit": "عدد",
+    "balance": 1,
+    "min": 5,
+    "cost": 5500
+  },
+  {
+    "id": "item_101",
+    "code": "ELEC-07",
+    "name": "موبايل Realme",
+    "cat": "ELEC",
+    "unit": "عدد",
+    "balance": 4,
+    "min": 5,
+    "cost": 5500,
+    "note": "1 سوفت وير قديم"
+  },
+  {
+    "id": "item_102",
+    "code": "ELEC-08",
+    "name": "موبايل samsung",
+    "cat": "ELEC",
+    "unit": "عدد",
+    "balance": 0,
+    "min": 5,
+    "cost": 5500
+  },
+  {
+    "id": "item_103",
+    "code": "ELEC-09",
+    "name": "موبايل IKU",
+    "cat": "ELEC",
+    "unit": "عدد",
+    "balance": 1,
+    "min": 5,
+    "cost": 5500
+  },
+  {
+    "id": "item_104",
+    "code": "ELEC-10",
+    "name": "موبايل Huawei",
+    "cat": "ELEC",
+    "unit": "عدد",
+    "balance": 0,
+    "min": 5,
+    "cost": 5500
+  },
+  {
+    "id": "item_105",
+    "code": "ELEC-11",
+    "name": "موبايل nokia",
+    "cat": "ELEC",
+    "unit": "عدد",
+    "balance": 0,
+    "min": 5,
+    "cost": 5500
+  },
+  {
+    "id": "item_106",
+    "code": "ELEC-12",
+    "name": "خطوط فودافون",
+    "cat": "ELEC",
+    "unit": "عدد",
+    "balance": -6,
+    "min": 5,
+    "cost": 250
+  },
+  {
+    "id": "item_107",
+    "code": "ELEC-13",
+    "name": "سكرينة موبايل",
+    "cat": "ELEC",
+    "unit": "عدد",
+    "balance": 1,
+    "min": 15,
+    "cost": 5500
+  },
+  {
+    "id": "item_108",
+    "code": "ELEC-14",
+    "name": "كاميرا ويب 2B",
+    "cat": "ELEC",
+    "unit": "عدد",
+    "balance": 5,
+    "min": 5,
+    "cost": 1200
+  },
+  {
+    "id": "item_109",
+    "code": "ELEC-15",
+    "name": "كاميرا ويب Logi Tech",
+    "cat": "ELEC",
+    "unit": "عدد",
+    "balance": 2,
+    "min": 5,
+    "cost": 1200
+  },
+  {
+    "id": "item_110",
+    "code": "ELEC-16",
+    "name": "كاميرا ويب Logi Tech مدرسين",
+    "cat": "ELEC",
+    "unit": "عدد",
+    "balance": 1,
+    "min": 5,
+    "cost": 1200
+  },
+  {
+    "id": "item_111",
+    "code": "ELEC-17",
+    "name": "كاميرا ويب 4Tech",
+    "cat": "ELEC",
+    "unit": "عدد",
+    "balance": 0,
+    "min": 5,
+    "cost": 1200
+  },
+  {
+    "id": "item_112",
+    "code": "ELEC-18",
+    "name": "حامل كاميرا صغير",
+    "cat": "ELEC",
+    "unit": "عدد",
+    "balance": 7,
+    "min": 5,
+    "cost": 1200
+  },
+  {
+    "id": "item_113",
+    "code": "ELEC-19",
+    "name": "سماعة رأس Onkuma",
+    "cat": "ELEC",
+    "unit": "عدد",
+    "balance": 1,
+    "min": 5,
+    "cost": 650
+  },
+  {
+    "id": "item_114",
+    "code": "ELEC-20",
+    "name": "سماعة رأس 4Tech",
+    "cat": "ELEC",
+    "unit": "عدد",
+    "balance": 5,
+    "min": 5,
+    "cost": 650
+  },
+  {
+    "id": "item_115",
+    "code": "ELEC-21",
+    "name": "سماعة رأس lennovo",
+    "cat": "ELEC",
+    "unit": "عدد",
+    "balance": 4,
+    "min": 5,
+    "cost": 650
+  },
+  {
+    "id": "item_116",
+    "code": "ELEC-22",
+    "name": "سماعة رأس plantronics",
+    "cat": "ELEC",
+    "unit": "عدد",
+    "balance": 7,
+    "min": 5,
+    "cost": 650
+  },
+  {
+    "id": "item_117",
+    "code": "ELEC-23",
+    "name": "سماعة رأس jabra",
+    "cat": "ELEC",
+    "unit": "عدد",
+    "balance": 0,
+    "min": 5,
+    "cost": 650
+  },
+  {
+    "id": "item_118",
+    "code": "ELEC-24",
+    "name": "سماعة رأس logi Tech",
+    "cat": "ELEC",
+    "unit": "عدد",
+    "balance": 0,
+    "min": 5,
+    "cost": 650
+  },
+  {
+    "id": "item_119",
+    "code": "ELEC-25",
+    "name": "اسفنج سماعة رأس",
+    "cat": "ELEC",
+    "unit": "عدد",
+    "balance": 10,
+    "min": 5,
+    "cost": 650
+  },
+  {
+    "id": "item_120",
+    "code": "ELEC-26",
+    "name": "خطوط وي",
+    "cat": "ELEC",
+    "unit": "عدد",
+    "balance": 53,
+    "min": 5,
+    "cost": 250
+  },
+  {
+    "id": "item_121",
+    "code": "ELEC-27",
+    "name": "UPS",
+    "cat": "ELEC",
+    "unit": "عدد",
+    "balance": 3,
+    "min": 5,
+    "cost": 250
+  },
+  {
+    "id": "item_122",
+    "code": "ELEC-28",
+    "name": "جهاز سنترال Amperlifer",
+    "cat": "ELEC",
+    "unit": "عدد",
+    "balance": 1,
+    "min": 1,
+    "cost": 250
+  },
+  {
+    "id": "item_123",
+    "code": "ELEC-29",
+    "name": "شاشة PC",
+    "cat": "ELEC",
+    "unit": "عدد",
+    "balance": 8,
+    "min": 5,
+    "cost": 3000
+  },
+  {
+    "id": "item_124",
+    "code": "ELEC-30",
+    "name": "جهاز PC ( كيسة )",
+    "cat": "ELEC",
+    "unit": "عدد",
+    "balance": 3,
+    "min": 5,
+    "cost": 250,
+    "note": "1 صيانه"
+  },
+  {
+    "id": "item_125",
+    "code": "ELEC-31",
+    "name": "مكبر صوت JBL",
+    "cat": "ELEC",
+    "unit": "عدد",
+    "balance": 1,
+    "min": 5,
+    "cost": 250
+  },
+  {
+    "id": "item_126",
+    "code": "ELEC-32",
+    "name": "مكبر صوت LAVA",
+    "cat": "ELEC",
+    "unit": "عدد",
+    "balance": 1,
+    "min": 5,
+    "cost": 250
+  },
+  {
+    "id": "item_127",
+    "code": "ELEC-33",
+    "name": "راوتر TP-link",
+    "cat": "ELEC",
+    "unit": "عدد",
+    "balance": 7,
+    "min": 5,
+    "cost": 850
+  },
+  {
+    "id": "item_128",
+    "code": "ELEC-34",
+    "name": "سويتش TP-link",
+    "cat": "ELEC",
+    "unit": "عدد",
+    "balance": 0,
+    "min": 5,
+    "cost": 850
+  },
+  {
+    "id": "item_129",
+    "code": "ELEC-35",
+    "name": "راوتر WE",
+    "cat": "ELEC",
+    "unit": "عدد",
+    "balance": 2,
+    "min": 5,
+    "cost": 850
+  },
+  {
+    "id": "item_130",
+    "code": "ELEC-36",
+    "name": "راوتر Vodafone",
+    "cat": "ELEC",
+    "unit": "عدد",
+    "balance": 1,
+    "min": 5,
+    "cost": 850
+  },
+  {
+    "id": "item_131",
+    "code": "ELEC-37",
+    "name": "اكسيس بوينت Xaomi",
+    "cat": "ELEC",
+    "unit": "عدد",
+    "balance": 1,
+    "min": 5,
+    "cost": 250
+  },
+  {
+    "id": "item_132",
+    "code": "ELEC-38",
+    "name": "كاميرا مراقبة ezviz",
+    "cat": "ELEC",
+    "unit": "عدد",
+    "balance": 1,
+    "min": 5,
+    "cost": 1200
+  },
+  {
+    "id": "item_133",
+    "code": "ELEC-39",
+    "name": "مروحة راك golden sun",
+    "cat": "ELEC",
+    "unit": "عدد",
+    "balance": 5,
+    "min": 5,
+    "cost": 250
+  },
+  {
+    "id": "item_134",
+    "code": "ELEC-40",
+    "name": "محول شاشة hd",
+    "cat": "ELEC",
+    "unit": "عدد",
+    "balance": 0,
+    "min": 5,
+    "cost": 3000
+  },
+  {
+    "id": "item_135",
+    "code": "ELEC-41",
+    "name": "كابل hd",
+    "cat": "ELEC",
+    "unit": "عدد",
+    "balance": 0,
+    "min": 5,
+    "cost": 95
+  },
+  {
+    "id": "item_136",
+    "code": "ELEC-42",
+    "name": "كابل ايفون",
+    "cat": "ELEC",
+    "unit": "عدد",
+    "balance": 0,
+    "min": 5,
+    "cost": 95
+  },
+  {
+    "id": "item_137",
+    "code": "ELEC-43",
+    "name": "راس شاحن انكر",
+    "cat": "ELEC",
+    "unit": "عدد",
+    "balance": 0,
+    "min": 5,
+    "cost": 95
+  },
+  {
+    "id": "item_138",
+    "code": "ELEC-44",
+    "name": "كابل طابعة",
+    "cat": "ELEC",
+    "unit": "عدد",
+    "balance": 0,
+    "min": 1,
+    "cost": 95
+  },
+  {
+    "id": "item_139",
+    "code": "ELEC-45",
+    "name": "دابل فيس",
+    "cat": "ELEC",
+    "unit": "عدد",
+    "balance": 2,
+    "min": 5,
+    "cost": 250
+  },
+  {
+    "id": "item_140",
+    "code": "ELEC-46",
+    "name": "ماووس",
+    "cat": "ELEC",
+    "unit": "عدد",
+    "balance": 10,
+    "min": 5,
+    "cost": 120
+  },
+  {
+    "id": "item_141",
+    "code": "ELEC-47",
+    "name": "شاحن لاب توب",
+    "cat": "ELEC",
+    "unit": "عدد",
+    "balance": -4,
+    "min": 1,
+    "cost": 12000
+  },
+  {
+    "id": "item_142",
+    "code": "ELEC-48",
+    "name": "شاحن موبايل",
+    "cat": "ELEC",
+    "unit": "عدد",
+    "balance": 3,
+    "min": 5,
+    "cost": 5500
+  },
+  {
+    "id": "item_143",
+    "code": "ELEC-49",
+    "name": "كابل باور",
+    "cat": "ELEC",
+    "unit": "عدد",
+    "balance": 20,
+    "min": 5,
+    "cost": 95,
+    "note": "1 ثلاثى"
+  },
+  {
+    "id": "item_144",
+    "code": "ELEC-50",
+    "name": "جهاز Xbox",
+    "cat": "ELEC",
+    "unit": "عدد",
+    "balance": 1,
+    "min": 5,
+    "cost": 250
+  },
+  {
+    "id": "item_145",
+    "code": "ELEC-51",
+    "name": "كيبورد",
+    "cat": "ELEC",
+    "unit": "عدد",
+    "balance": 18,
+    "min": 5,
+    "cost": 120
+  },
+  {
+    "id": "item_146",
+    "code": "ELEC-52",
+    "name": "كابل شاشة VGA",
+    "cat": "ELEC",
+    "unit": "عدد",
+    "balance": 15,
+    "min": 5,
+    "cost": 3000
+  },
+  {
+    "id": "item_147",
+    "code": "ELEC-53",
+    "name": "كابل شاشة ديسبلى",
+    "cat": "ELEC",
+    "unit": "عدد",
+    "balance": 15,
+    "min": 5,
+    "cost": 3000
+  },
+  {
+    "id": "item_148",
+    "code": "ELEC-54",
+    "name": "لاب توب HP",
+    "cat": "ELEC",
+    "unit": "عدد",
+    "balance": 1,
+    "min": 1,
+    "cost": 12000,
+    "note": "يوجد 1 صيانة"
+  },
+  {
+    "id": "item_149",
+    "code": "ELEC-55",
+    "name": "لاب توب Dell",
+    "cat": "ELEC",
+    "unit": "عدد",
+    "balance": -2,
+    "min": 1,
+    "cost": 12000
+  },
+  {
+    "id": "item_150",
+    "code": "ELEC-56",
+    "name": "لاب توب LENNOVO",
+    "cat": "ELEC",
+    "unit": "عدد",
+    "balance": 1,
+    "min": 1,
+    "cost": 12000
+  },
+  {
+    "id": "item_151",
+    "code": "ELEC-57",
+    "name": "لاب توب Macbook",
+    "cat": "ELEC",
+    "unit": "عدد",
+    "balance": -1,
+    "min": 1,
+    "cost": 12000
+  },
+  {
+    "id": "item_152",
+    "code": "ELEC-58",
+    "name": "كونفرت type c hub",
+    "cat": "ELEC",
+    "unit": "عدد",
+    "balance": 0,
+    "min": 5,
+    "cost": 250
+  },
+  {
+    "id": "item_153",
+    "code": "ELEC-59",
+    "name": "محول شاشة VGA",
+    "cat": "ELEC",
+    "unit": "عدد",
+    "balance": 1,
+    "min": 5,
+    "cost": 3000
+  },
+  {
+    "id": "item_154",
+    "code": "ELEC-60",
+    "name": "بطارية كاميرا",
+    "cat": "ELEC",
+    "unit": "عدد",
+    "balance": 0,
+    "min": 5,
+    "cost": 1200
+  },
+  {
+    "id": "item_155",
+    "code": "ELEC-61",
+    "name": "شاحن بطارية كاميرا",
+    "cat": "ELEC",
+    "unit": "عدد",
+    "balance": 0,
+    "min": 5,
+    "cost": 1200
+  },
+  {
+    "id": "item_156",
+    "code": "ELEC-62",
+    "name": "جراب موبايل",
+    "cat": "ELEC",
+    "unit": "عدد",
+    "balance": 13,
+    "min": 5,
+    "cost": 5500,
+    "note": "18 مستعمل"
+  },
+  {
+    "id": "item_157",
+    "code": "ELEC-63",
+    "name": "طقم بكر سحب للطابعة",
+    "cat": "ELEC",
+    "unit": "عدد",
+    "balance": 1,
+    "min": 1,
+    "cost": 250
+  },
+  {
+    "id": "item_158",
+    "code": "ELEC-64",
+    "name": "بطاريه 9 فولت",
+    "cat": "ELEC",
+    "unit": "عدد",
+    "balance": 2,
+    "min": 5,
+    "cost": 250
+  },
+  {
+    "id": "item_159",
+    "code": "ELEC-65",
+    "name": "موبايل VIVO",
+    "cat": "ELEC",
+    "unit": "عدد",
+    "balance": 0,
+    "min": 5,
+    "cost": 5500
+  },
+  {
+    "id": "item_160",
+    "code": "ELEC-66",
+    "name": "سبوت مسطره",
+    "cat": "ELEC",
+    "unit": "عدد",
+    "balance": 0,
+    "min": 5,
+    "cost": 250
+  },
+  {
+    "id": "item_161",
+    "code": "ELEC-67",
+    "name": "محول شاشة Dvi",
+    "cat": "ELEC",
+    "unit": "عدد",
+    "balance": 0,
+    "min": 5,
+    "cost": 3000
+  },
+  {
+    "id": "item_162",
+    "code": "ELEC-68",
+    "name": "كاميرا ويب FANTECH",
+    "cat": "ELEC",
+    "unit": "عدد",
+    "balance": 0,
+    "min": 5,
+    "cost": 1200
+  },
+  {
+    "id": "item_163",
+    "code": "ELEC-69",
+    "name": "موبايل HONOR",
+    "cat": "ELEC",
+    "unit": "عدد",
+    "balance": 0,
+    "min": 5,
+    "cost": 5500
+  },
+  {
+    "id": "item_164",
+    "code": "ELEC-70",
+    "name": "شنطة لاب توب",
+    "cat": "ELEC",
+    "unit": "عدد",
+    "balance": 0,
+    "min": 1,
+    "cost": 12000
+  },
+  {
+    "id": "item_165",
+    "code": "ELEC-71",
+    "name": "افوميتر",
+    "cat": "ELEC",
+    "unit": "عدد",
+    "balance": 0,
+    "min": 5,
+    "cost": 250
+  },
+  {
+    "id": "item_166",
+    "code": "ELEC-72",
+    "name": "ذراع افوميتر",
+    "cat": "ELEC",
+    "unit": "عدد",
+    "balance": 0,
+    "min": 5,
+    "cost": 250
+  },
+  {
+    "id": "item_167",
+    "code": "ELEC-73",
+    "name": "شريط لحام",
+    "cat": "ELEC",
+    "unit": "عدد",
+    "balance": 0,
+    "min": 5,
+    "cost": 250
+  },
+  {
+    "id": "item_168",
+    "code": "ELEC-74",
+    "name": "سماعة رأس soundcore",
+    "cat": "ELEC",
+    "unit": "عدد",
+    "balance": 1,
+    "min": 5,
+    "cost": 650
+  },
+  {
+    "id": "item_169",
+    "code": "ELEC-75",
+    "name": "سماعة رأس new bee",
+    "cat": "ELEC",
+    "unit": "عدد",
+    "balance": 0,
+    "min": 5,
+    "cost": 650
+  },
+  {
+    "id": "item_170",
+    "code": "ELEC-76",
+    "name": "هارد سامسونج",
+    "cat": "ELEC",
+    "unit": "عدد",
+    "balance": 0,
+    "min": 5,
+    "cost": 250
+  },
+  {
+    "id": "item_171",
+    "code": "ELEC-77",
+    "name": "كابل باور لاب توب",
+    "cat": "ELEC",
+    "unit": "عدد",
+    "balance": 0,
+    "min": 1,
+    "cost": 12000
+  },
+  {
+    "id": "item_172",
+    "code": "ELEC-78",
+    "name": "كابل نت",
+    "cat": "ELEC",
+    "unit": "عدد",
+    "balance": 0,
+    "min": 5,
+    "cost": 95
+  },
+  {
+    "id": "item_173",
+    "code": "ELEC-79",
+    "name": "ماووس لاسلكى",
+    "cat": "ELEC",
+    "unit": "عدد",
+    "balance": 1,
+    "min": 5,
+    "cost": 120
+  },
+  {
+    "id": "item_174",
+    "code": "ELEC-80",
+    "name": "حامل لاب توب",
+    "cat": "ELEC",
+    "unit": "عدد",
+    "balance": 0,
+    "min": 1,
+    "cost": 12000
+  },
+  {
+    "id": "item_175",
+    "code": "ELEC-81",
+    "name": "ريدر",
+    "cat": "ELEC",
+    "unit": "عدد",
+    "balance": 0,
+    "min": 5,
+    "cost": 250
+  },
+  {
+    "id": "item_176",
+    "code": "ELEC-82",
+    "name": "كابل شاحن موبايل",
+    "cat": "ELEC",
+    "unit": "عدد",
+    "balance": 2,
+    "min": 5,
+    "cost": 5500
+  },
+  {
+    "id": "item_177",
+    "code": "ELEC-83",
+    "name": "كابل توصيل سويتش",
+    "cat": "ELEC",
+    "unit": "عدد",
+    "balance": 0,
+    "min": 5,
+    "cost": 850
+  },
+  {
+    "id": "item_178",
+    "code": "ELEC-84",
+    "name": "كابل باور سويتش",
+    "cat": "ELEC",
+    "unit": "عدد",
+    "balance": 0,
+    "min": 5,
+    "cost": 850
+  },
+  {
+    "id": "item_179",
+    "code": "ELEC-85",
+    "name": "مايك لاسلكى",
+    "cat": "ELEC",
+    "unit": "عدد",
+    "balance": -1,
+    "min": 5,
+    "cost": 250
+  },
+  {
+    "id": "item_180",
+    "code": "ELEC-86",
+    "name": "حامل موبايل الكترونى",
+    "cat": "ELEC",
+    "unit": "عدد",
+    "balance": 0,
+    "min": 5,
+    "cost": 5500
+  },
+  {
+    "id": "item_181",
+    "code": "ELEC-87",
+    "name": "علبة ار جى معدن",
+    "cat": "ELEC",
+    "unit": "عدد",
+    "balance": 0,
+    "min": 5,
+    "cost": 250
+  },
+  {
+    "id": "item_182",
+    "code": "ELEC-88",
+    "name": "خطوط موبايل سعودى",
+    "cat": "ELEC",
+    "unit": "عدد",
+    "balance": 0,
+    "min": 5,
+    "cost": 5500
+  },
+  {
+    "id": "item_183",
+    "code": "ELEC-89",
+    "name": "كيبورد لاب توب",
+    "cat": "ELEC",
+    "unit": "عدد",
+    "balance": 0,
+    "min": 1,
+    "cost": 12000
+  },
+  {
+    "id": "item_184",
+    "code": "ELEC-90",
+    "name": "موبايل Redmi",
+    "cat": "ELEC",
+    "unit": "عدد",
+    "balance": -3,
+    "min": 5,
+    "cost": 5500
+  },
+  {
+    "id": "item_185",
+    "code": "ELEC-91",
+    "name": "مشترك كهرباء",
+    "cat": "ELEC",
+    "unit": "عدد",
+    "balance": -2,
+    "min": 5,
+    "cost": 250
+  },
+  {
+    "id": "item_186",
+    "code": "ELEC-92",
+    "name": "هارد خارجى",
+    "cat": "ELEC",
+    "unit": "عدد",
+    "balance": 0,
+    "min": 5,
+    "cost": 250
+  },
+  {
+    "id": "item_187",
+    "code": "ELEC-93",
+    "name": "كابل type c الى ethernet",
+    "cat": "ELEC",
+    "unit": "عدد",
+    "balance": 0,
+    "min": 5,
+    "cost": 95
+  },
+  {
+    "id": "item_188",
+    "code": "ELEC-94",
+    "name": "شاسيه لاب توب lennovo",
+    "cat": "ELEC",
+    "unit": "عدد",
+    "balance": 0,
+    "min": 1,
+    "cost": 12000
+  },
+  {
+    "id": "item_189",
+    "code": "ELEC-95",
+    "name": "شفاط 15*15",
+    "cat": "ELEC",
+    "unit": "عدد",
+    "balance": 0,
+    "min": 5,
+    "cost": 250
+  },
+  {
+    "id": "item_190",
+    "code": "ELEC-96",
+    "name": "سلك شعر",
+    "cat": "ELEC",
+    "unit": "عدد",
+    "balance": 0,
+    "min": 5,
+    "cost": 250
+  },
+  {
+    "id": "item_191",
+    "code": "ELEC-97",
+    "name": "كيبورد لاسلكى",
+    "cat": "ELEC",
+    "unit": "عدد",
+    "balance": 1,
+    "min": 5,
+    "cost": 120
+  },
+  {
+    "id": "item_192",
+    "code": "ELEC-98",
+    "name": "تليفون ارضى لاسلكى",
+    "cat": "ELEC",
+    "unit": "عدد",
+    "balance": 0,
+    "min": 5,
+    "cost": 250
+  },
+  {
+    "id": "item_193",
+    "code": "ELEC-99",
+    "name": "فلاشة KINGSTONE",
+    "cat": "ELEC",
+    "unit": "عدد",
+    "balance": 0,
+    "min": 5,
+    "cost": 250
+  },
+  {
+    "id": "item_194",
+    "code": "ELEC-100",
+    "name": "سماعة لاسلكيه",
+    "cat": "ELEC",
+    "unit": "عدد",
+    "balance": 0,
+    "min": 5,
+    "cost": 650
+  },
+  {
+    "id": "item_195",
+    "code": "ELEC-101",
+    "name": "شاحن موبايل لاسلكى",
+    "cat": "ELEC",
+    "unit": "عدد",
+    "balance": 0,
+    "min": 5,
+    "cost": 5500
+  },
+  {
+    "id": "item_196",
+    "code": "ELEC-102",
+    "name": "معطر جو عيدان",
+    "cat": "ELEC",
+    "unit": "عدد",
+    "balance": 0,
+    "min": 5,
+    "cost": 250
+  },
+  {
+    "id": "item_197",
+    "code": "ELEC-103",
+    "name": "ساعة حائط",
+    "cat": "ELEC",
+    "unit": "عدد",
+    "balance": 0,
+    "min": 5,
+    "cost": 250
+  },
+  {
+    "id": "item_198",
+    "code": "ELEC-104",
+    "name": "شاشة تلفزيون",
+    "cat": "ELEC",
+    "unit": "عدد",
+    "balance": 0,
+    "min": 5,
+    "cost": 3000
+  },
+  {
+    "id": "item_199",
+    "code": "ELEC-105",
+    "name": "كاميرا ويب rapoo",
+    "cat": "ELEC",
+    "unit": "عدد",
+    "balance": 0,
+    "min": 5,
+    "cost": 1200
+  },
+  {
+    "id": "item_200",
+    "code": "ELEC-106",
+    "name": "كاميرا ويب T-Dagger",
+    "cat": "ELEC",
+    "unit": "عدد",
+    "balance": 1,
+    "min": 5,
+    "cost": 1200
+  },
+  {
+    "id": "item_201",
+    "code": "ELEC-107",
+    "name": "هارد SSD",
+    "cat": "ELEC",
+    "unit": "عدد",
+    "balance": 0,
+    "min": 5,
+    "cost": 250
+  },
+  {
+    "id": "item_202",
+    "code": "ELEC-108",
+    "name": "لاب توب DELL مديرين",
+    "cat": "ELEC",
+    "unit": "عدد",
+    "balance": -2,
+    "min": 1,
+    "cost": 12000
+  },
+  {
+    "id": "item_203",
+    "code": "ELEC-109",
+    "name": "دنجل WIFI",
+    "cat": "ELEC",
+    "unit": "عدد",
+    "balance": 1,
+    "min": 5,
+    "cost": 250
+  },
+  {
+    "id": "item_204",
+    "code": "BUFF-01",
+    "name": "اكواب شاى",
+    "cat": "BUFF",
+    "unit": "عدد",
+    "balance": 250,
+    "min": 15,
+    "cost": 1.2
+  },
+  {
+    "id": "item_205",
+    "code": "BUFF-02",
+    "name": "اكواب قهوه",
+    "cat": "BUFF",
+    "unit": "عدد",
+    "balance": 950,
+    "min": 15,
+    "cost": 1.2
+  },
+  {
+    "id": "item_206",
+    "code": "BUFF-03",
+    "name": "اكواب مياه",
+    "cat": "BUFF",
+    "unit": "عدد",
+    "balance": 150,
+    "min": 15,
+    "cost": 1.2
+  },
+  {
+    "id": "item_207",
+    "code": "BUFF-04",
+    "name": "اكواب عصير",
+    "cat": "BUFF",
+    "unit": "عدد",
+    "balance": 300,
+    "min": 15,
+    "cost": 1.2
+  },
+  {
+    "id": "item_208",
+    "code": "BUFF-05",
+    "name": "غطاء اكواب عصير",
+    "cat": "BUFF",
+    "unit": "عدد",
+    "balance": 150,
+    "min": 15,
+    "cost": 1.2
+  },
+  {
+    "id": "item_209",
+    "code": "BUFF-06",
+    "name": "نوتيلا",
+    "cat": "BUFF",
+    "unit": "عدد",
+    "balance": 0,
+    "min": 5,
+    "cost": 45
+  },
+  {
+    "id": "item_210",
+    "code": "BUFF-07",
+    "name": "عصير جهينة",
+    "cat": "BUFF",
+    "unit": "عدد",
+    "balance": 3,
+    "min": 5,
+    "cost": 175
+  },
+  {
+    "id": "item_211",
+    "code": "BUFF-08",
+    "name": "سيرب نعناع",
+    "cat": "BUFF",
+    "unit": "عدد",
+    "balance": 0,
+    "min": 5,
+    "cost": 45
+  },
+  {
+    "id": "item_212",
+    "code": "BUFF-09",
+    "name": "سيرب رمان",
+    "cat": "BUFF",
+    "unit": "عدد",
+    "balance": 2,
+    "min": 5,
+    "cost": 45
+  },
+  {
+    "id": "item_213",
+    "code": "BUFF-10",
+    "name": "سيرب فراوله",
+    "cat": "BUFF",
+    "unit": "عدد",
+    "balance": 1,
+    "min": 5,
+    "cost": 45
+  },
+  {
+    "id": "item_214",
+    "code": "BUFF-11",
+    "name": "نيسكافيه",
+    "cat": "BUFF",
+    "unit": "عدد",
+    "balance": 1,
+    "min": 5,
+    "cost": 45
+  },
+  {
+    "id": "item_215",
+    "code": "BUFF-12",
+    "name": "علبة بسكويت ساده",
+    "cat": "BUFF",
+    "unit": "عدد",
+    "balance": 0,
+    "min": 5,
+    "cost": 45
+  },
+  {
+    "id": "item_216",
+    "code": "BUFF-13",
+    "name": "ليمون بلدى",
+    "cat": "BUFF",
+    "unit": "عدد",
+    "balance": 1,
+    "min": 5,
+    "cost": 45
+  },
+  {
+    "id": "item_217",
+    "code": "BUFF-14",
+    "name": "عصير مانجو فريش",
+    "cat": "BUFF",
+    "unit": "عدد",
+    "balance": 8,
+    "min": 5,
+    "cost": 175
+  },
+  {
+    "id": "item_218",
+    "code": "BUFF-15",
+    "name": "عصير برتقال فريش",
+    "cat": "BUFF",
+    "unit": "عدد",
+    "balance": 2,
+    "min": 5,
+    "cost": 175
+  },
+  {
+    "id": "item_219",
+    "code": "BUFF-16",
+    "name": "عصير فراوله فريش",
+    "cat": "BUFF",
+    "unit": "عدد",
+    "balance": 0,
+    "min": 5,
+    "cost": 175
+  },
+  {
+    "id": "item_220",
+    "code": "BUFF-17",
+    "name": "ايس كريم فانيلا",
+    "cat": "BUFF",
+    "unit": "عدد",
+    "balance": 10,
+    "min": 5,
+    "cost": 175
+  },
+  {
+    "id": "item_221",
+    "code": "BUFF-18",
+    "name": "ايس كريم شيكولاته",
+    "cat": "BUFF",
+    "unit": "عدد",
+    "balance": 0,
+    "min": 5,
+    "cost": 175
+  },
+  {
+    "id": "item_222",
+    "code": "BUFF-19",
+    "name": "موز بلدى",
+    "cat": "BUFF",
+    "unit": "عدد",
+    "balance": 0,
+    "min": 5,
+    "cost": 45
+  },
+  {
+    "id": "item_223",
+    "code": "BUFF-20",
+    "name": "رمان",
+    "cat": "BUFF",
+    "unit": "عدد",
+    "balance": 0,
+    "min": 5,
+    "cost": 45
+  },
+  {
+    "id": "item_224",
+    "code": "BUFF-21",
+    "name": "كيوى",
+    "cat": "BUFF",
+    "unit": "عدد",
+    "balance": 0,
+    "min": 5,
+    "cost": 45
+  },
+  {
+    "id": "item_225",
+    "code": "BUFF-22",
+    "name": "برقوق",
+    "cat": "BUFF",
+    "unit": "عدد",
+    "balance": 2,
+    "min": 5,
+    "cost": 45
+  },
+  {
+    "id": "item_226",
+    "code": "BUFF-23",
+    "name": "عنب احمر",
+    "cat": "BUFF",
+    "unit": "عدد",
+    "balance": 1,
+    "min": 5,
+    "cost": 45
+  },
+  {
+    "id": "item_227",
+    "code": "BUFF-24",
+    "name": "بودر فانيلا",
+    "cat": "BUFF",
+    "unit": "عدد",
+    "balance": 1,
+    "min": 5,
+    "cost": 45
+  },
+  {
+    "id": "item_228",
+    "code": "BUFF-25",
+    "name": "بودر شيكولاته",
+    "cat": "BUFF",
+    "unit": "عدد",
+    "balance": 0,
+    "min": 5,
+    "cost": 45
+  },
+  {
+    "id": "item_229",
+    "code": "BUFF-26",
+    "name": "صوص بلوكرواسو",
+    "cat": "BUFF",
+    "unit": "عدد",
+    "balance": 0,
+    "min": 5,
+    "cost": 45
+  },
+  {
+    "id": "item_230",
+    "code": "BUFF-27",
+    "name": "صوص كارميل",
+    "cat": "BUFF",
+    "unit": "عدد",
+    "balance": 2,
+    "min": 5,
+    "cost": 45
+  },
+  {
+    "id": "item_231",
+    "code": "BUFF-28",
+    "name": "صوص بلوبيرى",
+    "cat": "BUFF",
+    "unit": "عدد",
+    "balance": 1,
+    "min": 5,
+    "cost": 45
+  },
+  {
+    "id": "item_232",
+    "code": "BUFF-29",
+    "name": "صوص شيرى",
+    "cat": "BUFF",
+    "unit": "عدد",
+    "balance": 2,
+    "min": 5,
+    "cost": 45
+  },
+  {
+    "id": "item_233",
+    "code": "BUFF-30",
+    "name": "بودر فرابيه",
+    "cat": "BUFF",
+    "unit": "عدد",
+    "balance": 1,
+    "min": 5,
+    "cost": 45
+  },
+  {
+    "id": "item_234",
+    "code": "BUFF-31",
+    "name": "صوص شيكولاته",
+    "cat": "BUFF",
+    "unit": "عدد",
+    "balance": 2,
+    "min": 5,
+    "cost": 45
+  },
+  {
+    "id": "item_235",
+    "code": "BUFF-32",
+    "name": "بامب صوص",
+    "cat": "BUFF",
+    "unit": "عدد",
+    "balance": 0,
+    "min": 5,
+    "cost": 45
+  },
+  {
+    "id": "item_236",
+    "code": "BUFF-33",
+    "name": "علبة توينكز",
+    "cat": "BUFF",
+    "unit": "عدد",
+    "balance": 0,
+    "min": 5,
+    "cost": 45
+  },
+  {
+    "id": "item_237",
+    "code": "BUFF-34",
+    "name": "علبة اوريو",
+    "cat": "BUFF",
+    "unit": "عدد",
+    "balance": 0,
+    "min": 5,
+    "cost": 45
+  },
+  {
+    "id": "item_238",
+    "code": "BUFF-35",
+    "name": "علبة هوهوز",
+    "cat": "BUFF",
+    "unit": "عدد",
+    "balance": 0,
+    "min": 5,
+    "cost": 45
+  },
+  {
+    "id": "item_239",
+    "code": "BUFF-36",
+    "name": "بن سليمان وسط نصف كيلو",
+    "cat": "BUFF",
+    "unit": "عدد",
+    "balance": 38,
+    "min": 5,
+    "cost": 420
+  },
+  {
+    "id": "item_240",
+    "code": "BUFF-37",
+    "name": "بن محوج",
+    "cat": "BUFF",
+    "unit": "عدد",
+    "balance": 0,
+    "min": 5,
+    "cost": 420
+  },
+  {
+    "id": "item_241",
+    "code": "BUFF-38",
+    "name": "سبرايت و كولا",
+    "cat": "BUFF",
+    "unit": "عدد",
+    "balance": 0,
+    "min": 5,
+    "cost": 45
+  },
+  {
+    "id": "item_242",
+    "code": "BUFF-39",
+    "name": "شاليموه كبير",
+    "cat": "BUFF",
+    "unit": "عدد",
+    "balance": 8,
+    "min": 5,
+    "cost": 45
+  },
+  {
+    "id": "item_243",
+    "code": "BUFF-40",
+    "name": "شاليموه صغير",
+    "cat": "BUFF",
+    "unit": "عدد",
+    "balance": 1,
+    "min": 5,
+    "cost": 45
+  },
+  {
+    "id": "item_244",
+    "code": "BUFF-41",
+    "name": "معالق",
+    "cat": "BUFF",
+    "unit": "عدد",
+    "balance": 30,
+    "min": 5,
+    "cost": 45
+  },
+  {
+    "id": "item_245",
+    "code": "BUFF-42",
+    "name": "معالق صغيره",
+    "cat": "BUFF",
+    "unit": "عدد",
+    "balance": 8,
+    "min": 5,
+    "cost": 45
+  },
+  {
+    "id": "item_246",
+    "code": "BUFF-43",
+    "name": "شوك",
+    "cat": "BUFF",
+    "unit": "عدد",
+    "balance": 30,
+    "min": 5,
+    "cost": 45
+  },
+  {
+    "id": "item_247",
+    "code": "BUFF-44",
+    "name": "شاى الربيع",
+    "cat": "BUFF",
+    "unit": "عدد",
+    "balance": 2,
+    "min": 5,
+    "cost": 45
+  },
+  {
+    "id": "item_248",
+    "code": "BUFF-45",
+    "name": "باكيت نعناع",
+    "cat": "BUFF",
+    "unit": "عدد",
+    "balance": 2,
+    "min": 5,
+    "cost": 45
+  },
+  {
+    "id": "item_249",
+    "code": "BUFF-46",
+    "name": "اكياس فريزر",
+    "cat": "BUFF",
+    "unit": "عدد",
+    "balance": 10,
+    "min": 5,
+    "cost": 45
+  },
+  {
+    "id": "item_250",
+    "code": "BUFF-47",
+    "name": "شاى فواكهه",
+    "cat": "BUFF",
+    "unit": "عدد",
+    "balance": 0,
+    "min": 5,
+    "cost": 45
+  },
+  {
+    "id": "item_251",
+    "code": "BUFF-48",
+    "name": "لبن",
+    "cat": "BUFF",
+    "unit": "عدد",
+    "balance": 36,
+    "min": 5,
+    "cost": 420
+  },
+  {
+    "id": "item_252",
+    "code": "BUFF-49",
+    "name": "كارتونه تمر",
+    "cat": "BUFF",
+    "unit": "عدد",
+    "balance": 0,
+    "min": 5,
+    "cost": 45
+  },
+  {
+    "id": "item_253",
+    "code": "BUFF-50",
+    "name": "سكر",
+    "cat": "BUFF",
+    "unit": "عدد",
+    "balance": 82,
+    "min": 15,
+    "cost": 30
+  },
+  {
+    "id": "item_254",
+    "code": "BUFF-51",
+    "name": "فنجان شاى + طبق",
+    "cat": "BUFF",
+    "unit": "عدد",
+    "balance": 0,
+    "min": 5,
+    "cost": 45
+  },
+  {
+    "id": "item_255",
+    "code": "BUFF-52",
+    "name": "صينية تقديم طلبات",
+    "cat": "BUFF",
+    "unit": "عدد",
+    "balance": 0,
+    "min": 5,
+    "cost": 45
+  },
+  {
+    "id": "item_256",
+    "code": "BUFF-53",
+    "name": "طقم اكواب زجاج",
+    "cat": "BUFF",
+    "unit": "عدد",
+    "balance": 0,
+    "min": 15,
+    "cost": 1.2
+  },
+  {
+    "id": "item_257",
+    "code": "BUFF-54",
+    "name": "عسل نحل",
+    "cat": "BUFF",
+    "unit": "عدد",
+    "balance": 0,
+    "min": 5,
+    "cost": 45
+  },
+  {
+    "id": "item_258",
+    "code": "BUFF-55",
+    "name": "سودانى حلوانى",
+    "cat": "BUFF",
+    "unit": "عدد",
+    "balance": 1,
+    "min": 5,
+    "cost": 45
+  },
+  {
+    "id": "item_259",
+    "code": "BUFF-56",
+    "name": "فواكهه - جوافه",
+    "cat": "BUFF",
+    "unit": "عدد",
+    "balance": 0,
+    "min": 5,
+    "cost": 45
+  },
+  {
+    "id": "item_260",
+    "code": "BUFF-57",
+    "name": "فواكهه - بلح",
+    "cat": "BUFF",
+    "unit": "عدد",
+    "balance": 0,
+    "min": 5,
+    "cost": 45
+  },
+  {
+    "id": "item_261",
+    "code": "BUFF-58",
+    "name": "كارتونه مياه",
+    "cat": "BUFF",
+    "unit": "عدد",
+    "balance": 4,
+    "min": 5,
+    "cost": 45
+  },
+  {
+    "id": "item_262",
+    "code": "BUFF-59",
+    "name": "سحلب",
+    "cat": "BUFF",
+    "unit": "عدد",
+    "balance": 0,
+    "min": 5,
+    "cost": 45
+  },
+  {
+    "id": "item_263",
+    "code": "BUFF-60",
+    "name": "غلاية مياه",
+    "cat": "BUFF",
+    "unit": "عدد",
+    "balance": 0,
+    "min": 5,
+    "cost": 45
+  },
+  {
+    "id": "item_264",
+    "code": "BUFF-61",
+    "name": "ورق فويل",
+    "cat": "BUFF",
+    "unit": "عدد",
+    "balance": 0,
+    "min": 5,
+    "cost": 45
+  },
+  {
+    "id": "item_265",
+    "code": "BUFF-62",
+    "name": "فواكهه - افوكادو",
+    "cat": "BUFF",
+    "unit": "عدد",
+    "balance": 0,
+    "min": 5,
+    "cost": 45
+  },
+  {
+    "id": "item_266",
+    "code": "BUFF-63",
+    "name": "فواكهه - جزر",
+    "cat": "BUFF",
+    "unit": "عدد",
+    "balance": 0,
+    "min": 5,
+    "cost": 45
+  },
+  {
+    "id": "item_267",
+    "code": "BUFF-64",
+    "name": "تفاح بلدى",
+    "cat": "BUFF",
+    "unit": "عدد",
+    "balance": 0,
+    "min": 5,
+    "cost": 45
+  },
+  {
+    "id": "item_268",
+    "code": "BUFF-65",
+    "name": "فراوله",
+    "cat": "BUFF",
+    "unit": "عدد",
+    "balance": 0,
+    "min": 5,
+    "cost": 45
+  },
+  {
+    "id": "item_269",
+    "code": "BUFF-66",
+    "name": "خوخ",
+    "cat": "BUFF",
+    "unit": "عدد",
+    "balance": 0,
+    "min": 5,
+    "cost": 45
+  },
+  {
+    "id": "item_270",
+    "code": "BUFF-67",
+    "name": "قرفة عيدان",
+    "cat": "BUFF",
+    "unit": "عدد",
+    "balance": 0,
+    "min": 5,
+    "cost": 45
+  },
+  {
+    "id": "item_271",
+    "code": "BUFF-68",
+    "name": "صوص فسدق",
+    "cat": "BUFF",
+    "unit": "عدد",
+    "balance": 0,
+    "min": 5,
+    "cost": 45
+  },
+  {
+    "id": "item_272",
+    "code": "BUFF-69",
+    "name": "بن وسط ابو عوف",
+    "cat": "BUFF",
+    "unit": "عدد",
+    "balance": 0,
+    "min": 5,
+    "cost": 420
+  },
+  {
+    "id": "item_273",
+    "code": "BUFF-70",
+    "name": "شاى اخضر",
+    "cat": "BUFF",
+    "unit": "عدد",
+    "balance": 0,
+    "min": 5,
+    "cost": 45
+  },
+  {
+    "id": "item_274",
+    "code": "BUFF-71",
+    "name": "ينسون",
+    "cat": "BUFF",
+    "unit": "عدد",
+    "balance": 2,
+    "min": 5,
+    "cost": 45
+  },
+  {
+    "id": "item_275",
+    "code": "BUFF-72",
+    "name": "بن دار البن ربع",
+    "cat": "BUFF",
+    "unit": "عدد",
+    "balance": 0,
+    "min": 5,
+    "cost": 420
+  },
+  {
+    "id": "item_276",
+    "code": "BUFF-73",
+    "name": "قهوه بندق",
+    "cat": "BUFF",
+    "unit": "عدد",
+    "balance": 1,
+    "min": 5,
+    "cost": 420
+  },
+  {
+    "id": "item_277",
+    "code": "BUFF-74",
+    "name": "حلويات للعيد",
+    "cat": "BUFF",
+    "unit": "عدد",
+    "balance": 0,
+    "min": 5,
+    "cost": 45
+  },
+  {
+    "id": "item_278",
+    "code": "BUFF-75",
+    "name": "صوص لوتس",
+    "cat": "BUFF",
+    "unit": "عدد",
+    "balance": 0,
+    "min": 5,
+    "cost": 45
+  },
+  {
+    "id": "item_279",
+    "code": "BUFF-76",
+    "name": "مضرب نيسكافيه",
+    "cat": "BUFF",
+    "unit": "عدد",
+    "balance": 0,
+    "min": 5,
+    "cost": 45
+  },
+  {
+    "id": "item_280",
+    "code": "BUFF-77",
+    "name": "شاكوش ثلج",
+    "cat": "BUFF",
+    "unit": "عدد",
+    "balance": 0,
+    "min": 5,
+    "cost": 45
+  },
+  {
+    "id": "item_281",
+    "code": "BUFF-78",
+    "name": "بطيخ",
+    "cat": "BUFF",
+    "unit": "عدد",
+    "balance": 0,
+    "min": 5,
+    "cost": 45
+  },
+  {
+    "id": "item_282",
+    "code": "BUFF-79",
+    "name": "نسكويك",
+    "cat": "BUFF",
+    "unit": "عدد",
+    "balance": 1,
+    "min": 5,
+    "cost": 45
+  },
+  {
+    "id": "item_283",
+    "code": "BUFF-80",
+    "name": "مغرفة ثلج",
+    "cat": "BUFF",
+    "unit": "عدد",
+    "balance": 1,
+    "min": 5,
+    "cost": 45
+  },
+  {
+    "id": "item_284",
+    "code": "BUFF-81",
+    "name": "جنزبيل",
+    "cat": "BUFF",
+    "unit": "عدد",
+    "balance": 2,
+    "min": 5,
+    "cost": 45
+  },
+  {
+    "id": "item_285",
+    "code": "CLN-01",
+    "name": "معطر جو سبراى",
+    "cat": "CLN",
+    "unit": "عدد",
+    "balance": 0,
+    "min": 5,
+    "cost": 85
+  },
+  {
+    "id": "item_286",
+    "code": "CLN-02",
+    "name": "معطر جو بخاخ",
+    "cat": "CLN",
+    "unit": "عدد",
+    "balance": 8,
+    "min": 5,
+    "cost": 85
+  },
+  {
+    "id": "item_287",
+    "code": "CLN-03",
+    "name": "ملمع زجاج",
+    "cat": "CLN",
+    "unit": "عدد",
+    "balance": 5,
+    "min": 5,
+    "cost": 40
+  },
+  {
+    "id": "item_288",
+    "code": "CLN-04",
+    "name": "شامبو سجاد",
+    "cat": "CLN",
+    "unit": "عدد",
+    "balance": 2,
+    "min": 5,
+    "cost": 40
+  },
+  {
+    "id": "item_289",
+    "code": "CLN-05",
+    "name": "ديتول",
+    "cat": "CLN",
+    "unit": "عدد",
+    "balance": 7,
+    "min": 5,
+    "cost": 85
+  },
+  {
+    "id": "item_290",
+    "code": "CLN-06",
+    "name": "ملمع اثاث",
+    "cat": "CLN",
+    "unit": "عدد",
+    "balance": 4,
+    "min": 5,
+    "cost": 40
+  },
+  {
+    "id": "item_291",
+    "code": "CLN-07",
+    "name": "هاند ووش",
+    "cat": "CLN",
+    "unit": "عدد",
+    "balance": 10,
+    "min": 5,
+    "cost": 40
+  },
+  {
+    "id": "item_292",
+    "code": "CLN-08",
+    "name": "ليفة مواعين",
+    "cat": "CLN",
+    "unit": "عدد",
+    "balance": 9,
+    "min": 5,
+    "cost": 40
+  },
+  {
+    "id": "item_293",
+    "code": "CLN-09",
+    "name": "سلك مواعين",
+    "cat": "CLN",
+    "unit": "عدد",
+    "balance": 10,
+    "min": 5,
+    "cost": 40
+  },
+  {
+    "id": "item_294",
+    "code": "CLN-10",
+    "name": "فوطة مطبخ",
+    "cat": "CLN",
+    "unit": "عدد",
+    "balance": 5,
+    "min": 5,
+    "cost": 40
+  },
+  {
+    "id": "item_295",
+    "code": "CLN-11",
+    "name": "مسحوق غسيل",
+    "cat": "CLN",
+    "unit": "عدد",
+    "balance": 4,
+    "min": 5,
+    "cost": 40
+  },
+  {
+    "id": "item_296",
+    "code": "CLN-12",
+    "name": "جوانتى جلد",
+    "cat": "CLN",
+    "unit": "عدد",
+    "balance": 3,
+    "min": 5,
+    "cost": 40
+  },
+  {
+    "id": "item_297",
+    "code": "CLN-13",
+    "name": "جوانتى شفاف",
+    "cat": "CLN",
+    "unit": "عدد",
+    "balance": 8,
+    "min": 5,
+    "cost": 40
+  },
+  {
+    "id": "item_298",
+    "code": "CLN-14",
+    "name": "صابون مواعين",
+    "cat": "CLN",
+    "unit": "عدد",
+    "balance": 2,
+    "min": 5,
+    "cost": 40
+  },
+  {
+    "id": "item_299",
+    "code": "CLN-15",
+    "name": "منظف ارضيات",
+    "cat": "CLN",
+    "unit": "عدد",
+    "balance": 5,
+    "min": 5,
+    "cost": 40
+  },
+  {
+    "id": "item_300",
+    "code": "CLN-16",
+    "name": "نفتالين",
+    "cat": "CLN",
+    "unit": "عدد",
+    "balance": 10,
+    "min": 5,
+    "cost": 40
+  },
+  {
+    "id": "item_301",
+    "code": "CLN-17",
+    "name": "غيار معطر جو",
+    "cat": "CLN",
+    "unit": "عدد",
+    "balance": 0,
+    "min": 5,
+    "cost": 85
+  },
+  {
+    "id": "item_302",
+    "code": "CLN-18",
+    "name": "اكياس قمامة كبير",
+    "cat": "CLN",
+    "unit": "عدد",
+    "balance": 5,
+    "min": 5,
+    "cost": 40
+  },
+  {
+    "id": "item_303",
+    "code": "CLN-19",
+    "name": "اكياس قمامة صغير",
+    "cat": "CLN",
+    "unit": "عدد",
+    "balance": 7,
+    "min": 5,
+    "cost": 40
+  },
+  {
+    "id": "item_304",
+    "code": "CLN-20",
+    "name": "جاروف",
+    "cat": "CLN",
+    "unit": "عدد",
+    "balance": 0,
+    "min": 5,
+    "cost": 40
+  },
+  {
+    "id": "item_305",
+    "code": "CLN-21",
+    "name": "مساحة ارضية",
+    "cat": "CLN",
+    "unit": "عدد",
+    "balance": 1,
+    "min": 5,
+    "cost": 40
+  },
+  {
+    "id": "item_306",
+    "code": "CLN-22",
+    "name": "مساحة زجاج",
+    "cat": "CLN",
+    "unit": "عدد",
+    "balance": 1,
+    "min": 5,
+    "cost": 40
+  },
+  {
+    "id": "item_307",
+    "code": "CLN-23",
+    "name": "غيار موب",
+    "cat": "CLN",
+    "unit": "عدد",
+    "balance": 4,
+    "min": 5,
+    "cost": 40
+  },
+  {
+    "id": "item_308",
+    "code": "CLN-24",
+    "name": "مناديل بكر",
+    "cat": "CLN",
+    "unit": "عدد",
+    "balance": 120,
+    "min": 15,
+    "cost": 65
+  },
+  {
+    "id": "item_309",
+    "code": "CLN-25",
+    "name": "مناديل سحب",
+    "cat": "CLN",
+    "unit": "عدد",
+    "balance": 22,
+    "min": 15,
+    "cost": 65
+  },
+  {
+    "id": "item_310",
+    "code": "CLN-26",
+    "name": "مناديل سحب تواليت",
+    "cat": "CLN",
+    "unit": "عدد",
+    "balance": 26,
+    "min": 15,
+    "cost": 65
+  },
+  {
+    "id": "item_311",
+    "code": "CLN-27",
+    "name": "كحول طبى",
+    "cat": "CLN",
+    "unit": "عدد",
+    "balance": 4,
+    "min": 5,
+    "cost": 40
+  },
+  {
+    "id": "item_312",
+    "code": "CLN-28",
+    "name": "معطر تواليت",
+    "cat": "CLN",
+    "unit": "عدد",
+    "balance": 9,
+    "min": 5,
+    "cost": 85
+  },
+  {
+    "id": "item_313",
+    "code": "CLN-29",
+    "name": "كلور",
+    "cat": "CLN",
+    "unit": "عدد",
+    "balance": 6,
+    "min": 5,
+    "cost": 35
+  },
+  {
+    "id": "item_314",
+    "code": "CLN-30",
+    "name": "فنيك",
+    "cat": "CLN",
+    "unit": "عدد",
+    "balance": 5,
+    "min": 5,
+    "cost": 35
+  },
+  {
+    "id": "item_315",
+    "code": "CLN-31",
+    "name": "بخاخة مياه",
+    "cat": "CLN",
+    "unit": "عدد",
+    "balance": 1,
+    "min": 5,
+    "cost": 40
+  },
+  {
+    "id": "item_316",
+    "code": "CLN-32",
+    "name": "قمع",
+    "cat": "CLN",
+    "unit": "عدد",
+    "balance": 0,
+    "min": 5,
+    "cost": 40
+  },
+  {
+    "id": "item_317",
+    "code": "CLN-33",
+    "name": "مصفاه",
+    "cat": "CLN",
+    "unit": "عدد",
+    "balance": 0,
+    "min": 5,
+    "cost": 40
+  },
+  {
+    "id": "item_318",
+    "code": "CLN-34",
+    "name": "غيار مكنسة",
+    "cat": "CLN",
+    "unit": "عدد",
+    "balance": 0,
+    "min": 5,
+    "cost": 40
+  },
+  {
+    "id": "item_319",
+    "code": "CLN-35",
+    "name": "مساحة موب",
+    "cat": "CLN",
+    "unit": "عدد",
+    "balance": 0,
+    "min": 5,
+    "cost": 40
+  },
+  {
+    "id": "item_320",
+    "code": "CLN-36",
+    "name": "سلة قمامة",
+    "cat": "CLN",
+    "unit": "عدد",
+    "balance": 4,
+    "min": 5,
+    "cost": 40
+  },
+  {
+    "id": "item_321",
+    "code": "CLN-37",
+    "name": "معطر ارضيات خام",
+    "cat": "CLN",
+    "unit": "عدد",
+    "balance": 4,
+    "min": 5,
+    "cost": 85
+  },
+  {
+    "id": "item_322",
+    "code": "CLN-38",
+    "name": "مجفف هواء",
+    "cat": "CLN",
+    "unit": "عدد",
+    "balance": 0,
+    "min": 5,
+    "cost": 40
+  },
+  {
+    "id": "item_323",
+    "code": "CLN-39",
+    "name": "ريشه تنظيف",
+    "cat": "CLN",
+    "unit": "عدد",
+    "balance": 2,
+    "min": 5,
+    "cost": 40
+  }
+]

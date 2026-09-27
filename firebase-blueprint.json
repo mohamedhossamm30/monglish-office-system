@@ -1,0 +1,55 @@
+{
+  "entities": {
+    "Item": {
+      "title": "Item",
+      "type": "object",
+      "description": "Inventory item for Monglish Academy",
+      "properties": {
+        "id": { "type": "string" },
+        "name": { "type": "string" },
+        "cat": { "type": "string" },
+        "unit": { "type": "string" },
+        "qty": { "type": "number" },
+        "minQty": { "type": "number" },
+        "cost": { "type": "number" },
+        "code": { "type": "string" }
+      },
+      "required": ["id", "name", "cat"]
+    },
+    "PurchaseOrder": {
+      "title": "PurchaseOrder",
+      "type": "object",
+      "description": "Procurement purchase order",
+      "properties": {
+        "id": { "type": "string" },
+        "supplier": { "type": "string" },
+        "date": { "type": "string" },
+        "status": { "type": "string" }
+      },
+      "required": ["id", "supplier", "date", "status"]
+    },
+    "SystemState": {
+      "title": "SystemState",
+      "type": "object",
+      "description": "Central state document for Monglish Academy Operations",
+      "properties": {
+        "version": { "type": "number" },
+        "lastUpdated": { "type": "string" }
+      }
+    }
+  },
+  "firestore": {
+    "/system/{docId}": {
+      "schema": "SystemState",
+      "description": "Central synchronization and operations datasets document"
+    },
+    "/items/{itemId}": {
+      "schema": "Item",
+      "description": "Inventory items store"
+    },
+    "/procurement/{orderId}": {
+      "schema": "PurchaseOrder",
+      "description": "Procurement orders store"
+    }
+  }
+}
