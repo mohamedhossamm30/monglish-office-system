@@ -1,5 +1,5 @@
 import React, { useState, useMemo } from 'react';
-import { DepartmentRequest, RoleKey } from '../types';
+import { DepartmentRequest, RoleKey, AuthUser } from '../types';
 import { isDateInRange, today, uid, getNextDocumentSequence } from '../utils/storage';
 import { DocumentSequenceBadge } from './DocumentSequenceBadge';
 import { auth } from '../firebase';
@@ -22,6 +22,7 @@ import {
 interface RequestsViewProps {
   reqs: DepartmentRequest[];
   currentRole: RoleKey;
+  authUser?: AuthUser | null;
   onSaveReqs: (newReqs: DepartmentRequest[]) => void;
   onExportCSV: (type: string) => void;
   onOpenNewProcurement?: (title: string) => void;
@@ -31,12 +32,14 @@ interface RequestsViewProps {
 export const RequestsView: React.FC<RequestsViewProps> = ({
   reqs = [],
   currentRole,
+  authUser,
   onSaveReqs,
   onExportCSV,
   onOpenNewProcurement,
   showToast
 }) => {
   const isMgr = currentRole === 'manager';
+  const canManageReqs = isMgr || (authUser?.canWrite ? authUser.canWrite.includes('reqs') : true);
 
   const [filterStatus, setFilterStatus] = useState<string>('all');
   const [reqDeptFilter, setReqDeptFilter] = useState<string>('all');

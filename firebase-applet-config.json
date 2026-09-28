@@ -3,7 +3,7 @@
   "appId": "1:458688947715:web:4270737bcf87ca960a9036",
   "apiKey": "AIzaSyAGfOvMcj3NA8qUC3k2x8W9VCKh26y91eI",
   "authDomain": "monglishoffice.firebaseapp.com",
-  "firestoreDatabaseId": "ai-studio-d66400d2-87f7-4d2c-a717-1042cca81aed",
+  "firestoreDatabaseId": "(default)",
   "storageBucket": "monglishoffice.firebasestorage.app",
   "messagingSenderId": "458688947715",
   "measurementId": "",

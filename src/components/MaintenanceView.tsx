@@ -5,7 +5,8 @@ import {
   MaintenanceAsset,
   AssetMaintenanceLog,
   AssetCategory,
-  RoleKey
+  RoleKey,
+  AuthUser
 } from '../types';
 import {
   fmtDuration,
@@ -66,6 +67,7 @@ interface MaintenanceViewProps {
   maint: MaintenanceTicket[];
   assets?: MaintenanceAsset[];
   currentRole: RoleKey;
+  authUser?: AuthUser | null;
   onSaveMaint: (newMaint: MaintenanceTicket[]) => void;
   onSaveAssets?: (newAssets: MaintenanceAsset[]) => void;
   onExportCSV: (type: string) => void;
@@ -95,12 +97,15 @@ export const MaintenanceView: React.FC<MaintenanceViewProps> = ({
   maint = [],
   assets: propAssets,
   currentRole,
+  authUser,
   onSaveMaint,
   onSaveAssets,
   onExportCSV,
   showToast
 }) => {
   const isMgr = currentRole === 'manager';
+  const canWriteMaint = isMgr || (authUser?.canWrite ? authUser.canWrite.includes('maint') : true);
+  const canWriteAssets = isMgr || (authUser?.canWrite ? authUser.canWrite.includes('assets') : true);
 
   // Sub Tabs: 'tickets' (أعطال وبلاغات) | 'assets' (الأصول وجداول الصيانة الدورية) | 'history' (سجل تاريخ الصيانات)
   const [activeSubTab, setActiveSubTab] = useState<'tickets' | 'assets' | 'history'>('tickets');

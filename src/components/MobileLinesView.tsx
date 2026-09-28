@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { createPortal } from 'react-dom';
-import { MobileLine, RoleKey } from '../types';
+import { MobileLine, RoleKey, AuthUser } from '../types';
 import {
   uid,
   normalizeEgyptPhone,
@@ -44,6 +44,7 @@ import {
 interface MobileLinesViewProps {
   lines: MobileLine[];
   currentRole: RoleKey;
+  authUser?: AuthUser | null;
   onSaveLines: (newLines: MobileLine[]) => void;
   onExportCSV: (type: string) => void;
   onOpenExcelImport: (type: 'lines') => void;
@@ -53,12 +54,13 @@ interface MobileLinesViewProps {
 export const MobileLinesView: React.FC<MobileLinesViewProps> = ({
   lines = [],
   currentRole,
+  authUser,
   onSaveLines,
   onExportCSV,
   onOpenExcelImport,
   showToast
 }) => {
-  const canEdit = currentRole === 'manager' || currentRole === 'reception';
+  const canEdit = currentRole === 'manager' || (authUser?.canWrite ? authUser.canWrite.includes('lines') : currentRole === 'reception');
   const [searchQuery, setSearchQuery] = useState('');
 
   // Helper to determine whether a line is assigned to a genuine employee (not a code or service tag)

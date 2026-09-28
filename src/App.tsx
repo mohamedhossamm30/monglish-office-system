@@ -29,6 +29,7 @@ import {
   loadRoles,
   ROLE_ALLOWED_TABS,
   getRoleDefaultCanWrite,
+  getRoleDefaultCanStockMove,
   saveData,
   saveRoles,
   today,
@@ -64,7 +65,7 @@ import {
 } from './utils/firebaseSync';
 import { auth, db, firebaseConfig } from './firebase';
 import { onAuthStateChanged, signOut } from 'firebase/auth';
-import { doc, getDoc, getDocFromCache, setDoc, serverTimestamp } from 'firebase/firestore';
+import { doc, getDoc, getDocFromCache, setDoc, serverTimestamp, onSnapshot } from 'firebase/firestore';
 import { FirestoreQuotaBanner } from './components/FirestoreQuotaBanner';
 import { ErrorBoundary } from './components/ErrorBoundary';
 import { ROLES } from './data/seedData';
@@ -135,89 +136,138 @@ export default function App() {
     return !!localStorage.getItem('monglish_locked_dept');
   });
 
-  // Track Firebase Auth state & sync with users/{uid} collection
+  // Track Firebase Auth state & sync in real-time with users/{uid} document
   useEffect(() => {
-    const unsub = onAuthStateChanged(auth, async (fbUser) => {
+    let unsubUserDoc: (() => void) | null = null;
+
+    const unsubAuth = onAuthStateChanged(auth, async (fbUser) => {
+      if (unsubUserDoc) {
+        unsubUserDoc();
+        unsubUserDoc = null;
+      }
+
       if (fbUser) {
         try {
           const userDocRef = doc(db, 'users', fbUser.uid);
-          let snap: any = null;
 
-          try {
-            snap = await getDoc(userDocRef);
-          } catch (docErr) {
-            console.warn('Network or offline state when getting user profile doc:', docErr);
-            try {
-              snap = await getDocFromCache(userDocRef);
-            } catch {
-              snap = null;
+          // Real-time snapshot listener on the current user's profile doc
+          unsubUserDoc = onSnapshot(
+            userDocRef,
+            async (snap) => {
+              if (!snap.exists()) {
+                console.warn('User document was deleted or does not exist:', fbUser.uid);
+                await signOut(auth).catch(() => {});
+                clearAllLocalCachedData();
+                setAuthUser(null);
+                setCurrentRole(null);
+                setAuthLoading(false);
+                showToast('⚠️ تم تعطيل حسابك، تواصل مع المدير');
+                return;
+              }
+
+              const d = snap.data();
+              if (d?.active === false) {
+                console.warn('User account has been disabled by manager:', fbUser.uid);
+                await signOut(auth).catch(() => {});
+                clearAllLocalCachedData();
+                setAuthUser(null);
+                setCurrentRole(null);
+                setAuthLoading(false);
+                showToast('⚠️ تم تعطيل حسابك، تواصل مع المدير');
+                return;
+              }
+
+              const roleKey = (d.role as RoleKey) || 'warehouse';
+              const allRoles = loadRoles();
+              const roleConfig = allRoles[roleKey] || ROLES[roleKey];
+
+              const userObj: AuthUser = {
+                uid: fbUser.uid,
+                email: fbUser.email || d.email || '',
+                username: d.username || '',
+                displayName: d.displayName || d.label || roleConfig?.label || roleKey,
+                role: roleKey,
+                label: d.label || d.displayName || roleConfig?.label || roleKey,
+                canWrite: Array.isArray(d.canWrite) && d.canWrite.length > 0
+                  ? d.canWrite
+                  : getRoleDefaultCanWrite(roleKey),
+                canStockMove: d.canStockMove !== undefined
+                  ? !!d.canStockMove
+                  : getRoleDefaultCanStockMove(roleKey),
+                allowedTabs: Array.isArray(d.allowedTabs) && d.allowedTabs.length > 0
+                  ? d.allowedTabs
+                  : (roleKey === 'manager'
+                      ? ROLES.manager.tabs
+                      : (roleConfig?.tabs || ['dashboard'])),
+                active: true
+              };
+
+              setAuthUser(userObj);
+              setCurrentRole(roleKey);
+              setAuthLoading(false);
+            },
+            async (err) => {
+              console.warn('User doc snapshot notice:', err);
+              // Fallback to cache if network glitch
+              try {
+                const cacheSnap = await getDocFromCache(userDocRef);
+                if (cacheSnap.exists()) {
+                  const d = cacheSnap.data();
+                  if (d?.active === false) {
+                    await signOut(auth).catch(() => {});
+                    clearAllLocalCachedData();
+                    setAuthUser(null);
+                    setCurrentRole(null);
+                    showToast('⚠️ تم تعطيل حسابك، تواصل مع المدير');
+                    setAuthLoading(false);
+                    return;
+                  }
+                  const roleKey = (d.role as RoleKey) || 'warehouse';
+                  const allRoles = loadRoles();
+                  const roleConfig = allRoles[roleKey] || ROLES[roleKey];
+                  const userObj: AuthUser = {
+                    uid: fbUser.uid,
+                    email: fbUser.email || d.email || '',
+                    username: d.username || '',
+                    displayName: d.displayName || d.label || roleConfig?.label || roleKey,
+                    role: roleKey,
+                    label: d.label || d.displayName || roleConfig?.label || roleKey,
+                    canWrite: Array.isArray(d.canWrite) && d.canWrite.length > 0
+                      ? d.canWrite
+                      : getRoleDefaultCanWrite(roleKey),
+                    canStockMove: d.canStockMove !== undefined
+                      ? !!d.canStockMove
+                      : getRoleDefaultCanStockMove(roleKey),
+                    allowedTabs: Array.isArray(d.allowedTabs) && d.allowedTabs.length > 0
+                      ? d.allowedTabs
+                      : (roleKey === 'manager'
+                          ? ROLES.manager.tabs
+                          : (roleConfig?.tabs || ['dashboard'])),
+                    active: true
+                  };
+                  setAuthUser(userObj);
+                  setCurrentRole(roleKey);
+                }
+              } catch {}
+              setAuthLoading(false);
             }
-          }
-
-          if (!snap || !snap.exists || !snap.exists()) {
-            console.warn('No registered user profile found in Firestore for uid:', fbUser.uid);
-            await signOut(auth).catch(() => {});
-            clearAllLocalCachedData();
-            setAuthUser(null);
-            setCurrentRole(null);
-            setAuthLoading(false);
-            return;
-          }
-
-          const d = snap.data();
-          if (d?.active !== true || !d?.role) {
-            console.warn('User account is inactive or has no assigned role:', fbUser.uid);
-            await signOut(auth).catch(() => {});
-            clearAllLocalCachedData();
-            setAuthUser(null);
-            setCurrentRole(null);
-            setAuthLoading(false);
-            return;
-          }
-
-          const roleKey = d.role as RoleKey;
-          const allRoles = loadRoles();
-          const roleConfig = allRoles[roleKey] || ROLES[roleKey];
-
-          const userObj: AuthUser = {
-            uid: fbUser.uid,
-            email: fbUser.email || d.email || '',
-            username: d.username || '',
-            displayName: d.displayName || d.label || roleConfig?.label || roleKey,
-            role: roleKey,
-            label: d.label || d.displayName || roleConfig?.label || roleKey,
-            canWrite: Array.isArray(d.canWrite) && d.canWrite.length > 0
-              ? d.canWrite
-              : getRoleDefaultCanWrite(roleKey),
-            canStockMove: d.canStockMove !== undefined
-              ? !!d.canStockMove
-              : ['manager', 'warehouse', 'buffet', 'cleaning', 'reception'].includes(roleKey),
-            allowedTabs: Array.isArray(d.allowedTabs) && d.allowedTabs.length > 0
-              ? d.allowedTabs
-              : (roleKey === 'manager'
-                  ? ROLES.manager.tabs
-                  : (roleConfig?.tabs || ['dashboard'])),
-            active: true
-          };
-
-          setAuthUser(userObj);
-          setCurrentRole(roleKey);
+          );
         } catch (e) {
-          console.warn('Failed to verify user profile:', e);
-          await signOut(auth).catch(() => {});
-          clearAllLocalCachedData();
-          setAuthUser(null);
-          setCurrentRole(null);
+          console.warn('Failed to attach user snapshot listener:', e);
+          setAuthLoading(false);
         }
       } else {
         clearAllLocalCachedData();
         setAuthUser(null);
         setCurrentRole(null);
+        setAuthLoading(false);
       }
-      setAuthLoading(false);
     });
 
-    return () => unsub();
+    return () => {
+      if (unsubUserDoc) unsubUserDoc();
+      unsubAuth();
+    };
   }, []);
 
   const [activeTab, setActiveTab] = useState<TabKey>('dashboard');
@@ -973,7 +1023,7 @@ export default function App() {
     authUser
   ]);
 
-  // Role Allowed Tabs memoization
+  // Role Allowed Tabs memoization (User account document is 1st priority, Role config fallback)
   const allowedTabs: TabKey[] = useMemo(() => {
     if (!currentRole) return [];
     if (currentRole === 'manager') {
@@ -992,13 +1042,18 @@ export default function App() {
         'ai'
       ];
     }
+    // 1. Account document allowedTabs takes highest priority
+    if (authUser?.allowedTabs && Array.isArray(authUser.allowedTabs) && authUser.allowedTabs.length > 0) {
+      return authUser.allowedTabs;
+    }
+    // 2. Global Role configuration fallback
     const allRoles = loadRoles();
     const config = allRoles[currentRole] || ROLES[currentRole];
     if (config?.tabs && Array.isArray(config.tabs) && config.tabs.length > 0) {
       return config.tabs;
     }
     return ROLE_ALLOWED_TABS[currentRole] || ['requests'];
-  }, [currentRole]);
+  }, [currentRole, authUser?.allowedTabs]);
 
   // Strict RBAC Tab Guard
   useEffect(() => {
@@ -1857,6 +1912,7 @@ export default function App() {
                 moves={moves}
                 proc={proc}
                 currentRole={currentRole}
+                authUser={authUser}
                 onSaveItems={handleSaveItems}
                 onSaveMoves={handleSaveMoves}
                 onSaveProc={handleSaveProc}
@@ -1875,6 +1931,7 @@ export default function App() {
                 suppliers={suppliers}
                 recurring={recurring}
                 currentRole={currentRole}
+                authUser={authUser}
                 onSaveProc={handleSaveProc}
                 onSaveItems={handleSaveItems}
                 onSaveMoves={handleSaveMoves}
@@ -1892,6 +1949,7 @@ export default function App() {
                 maint={maint}
                 assets={assets}
                 currentRole={currentRole}
+                authUser={authUser}
                 onSaveMaint={handleSaveMaint}
                 onSaveAssets={handleSaveAssets}
                 onExportCSV={handleExportCSV}
@@ -1906,6 +1964,7 @@ export default function App() {
                 moves={moves}
                 stock={stock}
                 currentRole={currentRole}
+                authUser={authUser}
                 onSaveItems={handleSaveItems}
                 onSaveProc={handleSaveProc}
                 onSaveMoves={handleSaveMoves}
@@ -1925,6 +1984,7 @@ export default function App() {
                 moves={moves}
                 stock={stock}
                 currentRole={currentRole}
+                authUser={authUser}
                 onSaveClean={handleSaveClean}
                 onSaveCleanHist={handleSaveCleanHist}
                 onSaveItems={handleSaveItems}
@@ -1941,6 +2001,7 @@ export default function App() {
               <MobileLinesView
                 lines={lines}
                 currentRole={currentRole}
+                authUser={authUser}
                 onSaveLines={handleSaveLines}
                 onExportCSV={handleExportCSV}
                 onOpenExcelImport={(type) => setExcelImportType(type)}
@@ -1952,6 +2013,7 @@ export default function App() {
               <RequestsView
                 reqs={reqs}
                 currentRole={currentRole}
+                authUser={authUser}
                 onSaveReqs={handleSaveReqs}
                 onExportCSV={handleExportCSV}
                 onOpenNewProcurement={() => setActiveTab('procurement')}
@@ -1969,6 +2031,7 @@ export default function App() {
                 moves={moves}
                 items={items}
                 currentRole={currentRole}
+                authUser={authUser}
                 onSaveRecurring={handleSaveRecurring}
                 onSavePettyCash={handleSavePettyCash}
                 onExportCSV={handleExportCSV}

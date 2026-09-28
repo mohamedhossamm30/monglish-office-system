@@ -2255,22 +2255,61 @@ export async function readExcelFile(file: File): Promise<Record<string, any>[]> 
 export function getRoleDefaultCanWrite(role: string): string[] {
   switch (role) {
     case 'manager':
-      return ['*'];
+      return [
+        'items',
+        'moves',
+        'proc',
+        'maint',
+        'assets',
+        'clean',
+        'cleanHist',
+        'lines',
+        'reqs',
+        'suppliers',
+        'recurring',
+        'stock',
+        'pettyCash',
+        'activities'
+      ];
     case 'purchase':
-      return ['proc', 'suppliers', 'recurring', 'reqs', 'activities'];
+      return ['proc', 'suppliers', 'recurring', 'reqs', 'pettyCash', 'activities'];
     case 'warehouse':
       return ['items', 'moves', 'proc', 'stock', 'reqs', 'activities'];
     case 'maint':
-      return ['maint', 'assets', 'reqs', 'activities'];
+      return ['maint', 'assets', 'moves', 'reqs', 'activities'];
     case 'buffet':
       return ['moves', 'pettyCash', 'reqs', 'activities'];
     case 'cleaning':
-      return ['clean', 'cleanHist', 'reqs', 'activities'];
+      return ['clean', 'cleanHist', 'moves', 'reqs', 'activities'];
     case 'reception':
-      return ['lines', 'maint', 'pettyCash', 'reqs', 'activities'];
+      return ['lines', 'moves', 'reqs', 'activities'];
     default:
-      return [role, 'reqs', 'activities'];
+      return ['reqs', 'activities'];
   }
+}
+
+export function getRoleDefaultCanStockMove(role: string): boolean {
+  return ['manager', 'warehouse', 'buffet', 'cleaning', 'reception'].includes(role);
+}
+
+export function getRoleDefaultAllowedTabs(role: string): TabKey[] {
+  if (role === 'manager') {
+    return [
+      'dashboard',
+      'inventory',
+      'procurement',
+      'maintenance',
+      'buffet',
+      'cleaning',
+      'lines',
+      'requests',
+      'costs',
+      'reports',
+      'settings',
+      'ai'
+    ];
+  }
+  return ROLE_ALLOWED_TABS[role] || ['requests'];
 }
 
 export function getDefaultRoles(): Record<string, RoleConfig> {

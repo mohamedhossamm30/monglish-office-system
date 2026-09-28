@@ -396,12 +396,6 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({
             )}
           </div>
 
-          {/* Helpful First-Time Setup Tip */}
-          <div className="p-3 rounded-xl bg-amber-50/90 border border-amber-200 text-xs text-amber-900 leading-relaxed">
-            <span className="font-bold block mb-0.5 text-amber-950">💡 أول مرة تستخدم النظام؟</span>
-            لا تحتاج لإنشاء بريد مسبقاً! فقط أدخل اسم المستخدم الذي تريده (مثال: <span className="font-mono font-bold">manager</span>) وكلمة مرور من اختيارك (8 أحرف/أرقام على الأقل) وانقر <strong>تسجيل الدخول</strong> وسيتم إنشاء حسابك وتفعيله سحابياً فوراً.
-          </div>
-
           {/* Submit Button */}
           <button
             type="submit"

@@ -16,28 +16,41 @@ service cloud.firestore {
         : null;
     }
 
-    function isActiveUser() {
-      return isSignedIn();
-    }
-
     function getUserRole() {
       return getUserDoc() != null ? getUserDoc().role : 'guest';
     }
 
     function isManager() {
-      return isSignedIn();
+      return isSignedIn() &&
+        (getUserDoc() == null || getUserDoc().active != false) &&
+        (
+          getUserRole() == 'manager' ||
+          request.auth.token.email == 'mohamedhossamm30@gmail.com' ||
+          request.auth.token.email == 'mohamed.hossam@monglish.uk'
+        );
+    }
+
+    function isActiveUser() {
+      return isSignedIn() && (
+        isManager() ||
+        (getUserDoc() != null && getUserDoc().active != false)
+      );
     }
 
     function isRole(targetRole) {
-      return isSignedIn();
+      return isManager() || (isActiveUser() && getUserRole() == targetRole);
     }
 
     function canStockMove() {
-      return isSignedIn();
+      return isManager() || (isActiveUser() && getUserDoc().canStockMove == true);
     }
 
     function canWriteCollection(colName) {
-      return isSignedIn();
+      return isManager() || (
+        isActiveUser() &&
+        getUserDoc().canWrite is list &&
+        colName in getUserDoc().canWrite
+      );
     }
 
     function isValidDocId(id) {
@@ -49,7 +62,8 @@ service cloud.firestore {
     // ----------------------------------------------------
 
     match /users/{userId} {
-      allow read, write: if isSignedIn() && (request.auth.uid == userId || isManager());
+      allow read: if isSignedIn() && (request.auth.uid == userId || isManager());
+      allow write: if isManager();
     }
 
     // ----------------------------------------------------
@@ -57,7 +71,8 @@ service cloud.firestore {
     // ----------------------------------------------------
 
     match /system/{docId} {
-      allow read, write: if isSignedIn();
+      allow read: if isActiveUser();
+      allow write: if isManager();
     }
 
     // ----------------------------------------------------
@@ -65,15 +80,28 @@ service cloud.firestore {
     // ----------------------------------------------------
 
     match /items/{itemId} {
-      allow read, create, update, delete: if isSignedIn();
+      allow read: if isActiveUser();
+      allow create, delete: if canWriteCollection('items');
+      allow update: if canWriteCollection('items') || (
+        canStockMove() &&
+        request.resource.data.diff(resource.data).affectedKeys().hasOnly([
+          'balance',
+          'updatedAt',
+          'updatedAtIso',
+          'updatedBy'
+        ])
+      );
     }
 
     match /moves/{moveId} {
-      allow read, create, update, delete: if isSignedIn();
+      allow read: if isActiveUser();
+      allow create: if canStockMove() || canWriteCollection('moves');
+      allow update, delete: if isManager();
     }
 
     match /stock/{stockId} {
-      allow read, create, update, delete: if isSignedIn();
+      allow read: if isActiveUser();
+      allow create, update, delete: if canWriteCollection('stock');
     }
 
     // ----------------------------------------------------
@@ -81,47 +109,119 @@ service cloud.firestore {
     // ----------------------------------------------------
 
     match /reqs/{reqId} {
-      allow read, create, update, delete: if isSignedIn();
+      allow read: if isActiveUser();
+      allow create: if isActiveUser() && request.resource.data.createdByUid == request.auth.uid;
+      allow update, delete: if isManager() || isRole('purchase') || (
+        isActiveUser() &&
+        resource.data.createdByUid == request.auth.uid &&
+        resource.data.status in ['جديد', 'pending']
+      );
     }
 
     match /proc/{orderId} {
-      allow read, create, update, delete: if isSignedIn();
+      allow read: if isActiveUser();
+      allow create: if canWriteCollection('proc');
+      allow delete: if isManager() && !(resource.data.status in ['مكتمل', 'تم الاستلام']);
+      allow update: if
+        // Soft-delete restriction: forbidden for everyone if order is received
+        (
+          !(request.resource.data.deleted == true && resource.data.deleted != true) ||
+          (isManager() && !(resource.data.status in ['مكتمل', 'تم الاستلام']))
+        ) &&
+        (
+          // Manager can update pending or cancelled orders (received orders handled strictly)
+          isManager() ||
+          (
+            // Non-manager can only update while the order is pending
+            resource.data.status == 'قيد التنفيذ' &&
+            (
+              // Warehouse receiving: can only update receiving fields and status must be 'مكتمل'
+              (
+                canStockMove() &&
+                request.resource.data.status == 'مكتمل' &&
+                request.resource.data.diff(resource.data).affectedKeys().hasOnly([
+                  'status',
+                  'receivedDate',
+                  'receivedBy',
+                  'receiptNote',
+                  'invoiceNumber',
+                  'updatedAt',
+                  'updatedAtIso',
+                  'updatedBy'
+                ])
+              ) ||
+              // Procurement update: edit while pending, or cancel with cancellation fields
+              (
+                isRole('purchase') &&
+                (
+                  request.resource.data.status == 'قيد التنفيذ' ||
+                  (
+                    request.resource.data.status == 'ملغي' &&
+                    request.resource.data.diff(resource.data).affectedKeys().hasOnly([
+                      'status',
+                      'cancelledBy',
+                      'cancelledAt',
+                      'cancelReason',
+                      'updatedAt',
+                      'updatedAtIso',
+                      'updatedBy'
+                    ])
+                  )
+                )
+              )
+            )
+          )
+        );
     }
 
     match /pettyCash/{expenseId} {
-      allow read, create, update, delete: if isSignedIn();
+      allow read: if isActiveUser();
+      allow create, update, delete: if canWriteCollection('pettyCash');
     }
 
     match /maint/{ticketId} {
-      allow read, create, update, delete: if isSignedIn();
+      allow read: if isActiveUser();
+      allow create, update, delete: if canWriteCollection('maint');
     }
 
     match /assets/{assetId} {
-      allow read, create, update, delete: if isSignedIn();
+      allow read: if isActiveUser();
+      allow create, update, delete: if canWriteCollection('assets') || isRole('maint');
     }
 
     match /clean/{taskId} {
-      allow read, create, update, delete: if isSignedIn();
+      allow read: if isActiveUser();
+      allow create, update, delete: if canWriteCollection('clean');
     }
 
     match /cleanHist/{histId} {
-      allow read, create, update, delete: if isSignedIn();
+      allow read: if isActiveUser();
+      allow create, update, delete: if canWriteCollection('cleanHist') || canWriteCollection('clean');
     }
 
     match /lines/{lineId} {
-      allow read, create, update, delete: if isSignedIn();
+      allow read: if isActiveUser();
+      allow create, update, delete: if canWriteCollection('lines');
     }
 
     match /suppliers/{supplierId} {
-      allow read, create, update, delete: if isSignedIn();
+      allow read: if isActiveUser();
+      allow create, update, delete: if canWriteCollection('suppliers');
     }
 
     match /recurring/{recId} {
-      allow read, create, update, delete: if isSignedIn();
+      allow read: if isActiveUser();
+      allow create, update, delete: if canWriteCollection('recurring');
     }
 
     match /activities/{actId} {
-      allow read, create, update, delete: if isSignedIn();
+      allow read: if isActiveUser();
+      allow create: if isActiveUser();
+      allow update: if isManager() || (
+        isActiveUser() &&
+        request.resource.data.diff(resource.data).affectedKeys().hasOnly(['read', 'updatedAt'])
+      );
+      allow delete: if isManager();
     }
 
     // Default deny all other paths

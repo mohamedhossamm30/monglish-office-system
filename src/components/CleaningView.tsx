@@ -6,7 +6,8 @@ import {
   PhysicalStocktake,
   PurchaseOrder,
   RoleKey,
-  StockMove
+  StockMove,
+  AuthUser
 } from '../types';
 import { isoToday, today, uid, getNextDocumentSequence } from '../utils/storage';
 import {
@@ -34,6 +35,7 @@ interface CleaningViewProps {
   moves: StockMove[];
   stock: PhysicalStocktake[];
   currentRole: RoleKey;
+  authUser?: AuthUser | null;
   onSaveClean: (newClean: CleaningTask[]) => void;
   onSaveCleanHist: (newHist: CleaningHistory[]) => void;
   onSaveItems: (newItems: InventoryItem[]) => void;
@@ -53,6 +55,7 @@ export const CleaningView: React.FC<CleaningViewProps> = ({
   moves = [],
   stock = [],
   currentRole,
+  authUser,
   onSaveClean,
   onSaveCleanHist,
   onSaveItems,
@@ -64,6 +67,8 @@ export const CleaningView: React.FC<CleaningViewProps> = ({
   showToast
 }) => {
   const isMgr = currentRole === 'manager';
+  const canWriteClean = isMgr || (authUser?.canWrite ? authUser.canWrite.includes('clean') : true);
+  const canWriteMoves = isMgr || (authUser?.canWrite ? (authUser.canWrite.includes('moves') || authUser.canWrite.includes('clean')) : true) || (authUser?.canStockMove ?? true);
   const isCleaningLeader = currentRole === 'cleaning';
   const canManageTasks = isMgr || isCleaningLeader;
 

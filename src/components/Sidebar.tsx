@@ -16,6 +16,7 @@ interface SidebarProps {
   currentRole: RoleKey;
   activeTab: TabKey;
   isLockedDept?: boolean;
+  allowedTabs?: TabKey[];
   badgeCounts?: Record<TabKey, number>;
   pendingRequestsCount?: number;
   unreadNotificationsCount?: number;
@@ -32,6 +33,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
   currentRole,
   activeTab,
   isLockedDept = false,
+  allowedTabs: propAllowedTabs,
   badgeCounts,
   pendingRequestsCount,
   unreadNotificationsCount = 0,
@@ -65,12 +67,15 @@ export const Sidebar: React.FC<SidebarProps> = ({
         'ai'
       ];
     }
+    if (propAllowedTabs && Array.isArray(propAllowedTabs) && propAllowedTabs.length > 0) {
+      return propAllowedTabs;
+    }
     const cfg = dynamicRoles[currentRole] || ROLES[currentRole];
     if (cfg?.tabs && Array.isArray(cfg.tabs) && cfg.tabs.length > 0) {
       return cfg.tabs;
     }
     return ROLE_ALLOWED_TABS[currentRole] || ['requests'];
-  }, [currentRole, dynamicRoles]);
+  }, [currentRole, propAllowedTabs, dynamicRoles]);
 
   const getBadge = (t: TabKey) => {
     if (badgeCounts && typeof badgeCounts[t] === 'number' && badgeCounts[t] > 0) {

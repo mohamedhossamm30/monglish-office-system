@@ -4,7 +4,8 @@ import {
   PhysicalStocktake,
   PurchaseOrder,
   RoleKey,
-  StockMove
+  StockMove,
+  AuthUser
 } from '../types';
 import { isoToday, today, uid, getNextDocumentSequence } from '../utils/storage';
 import {
@@ -27,6 +28,7 @@ interface BuffetViewProps {
   moves: StockMove[];
   stock: PhysicalStocktake[];
   currentRole: RoleKey;
+  authUser?: AuthUser | null;
   onSaveItems: (newItems: InventoryItem[]) => void;
   onSaveProc: (newProc: PurchaseOrder[]) => void;
   onSaveMoves: (newMoves: StockMove[]) => void;
@@ -42,6 +44,7 @@ export const BuffetView: React.FC<BuffetViewProps> = ({
   moves = [],
   stock = [],
   currentRole,
+  authUser,
   onSaveItems,
   onSaveProc,
   onSaveMoves,
@@ -51,6 +54,8 @@ export const BuffetView: React.FC<BuffetViewProps> = ({
   showToast
 }) => {
   const isMgr = currentRole === 'manager';
+  const canWriteBuffet = isMgr || (authUser?.canWrite ? (authUser.canWrite.includes('moves') || authUser.canWrite.includes('pettyCash')) : true) || (authUser?.canStockMove ?? true);
+  const canWriteStock = isMgr || (authUser?.canWrite ? authUser.canWrite.includes('stock') : true);
 
   const buffItems = items.filter((i) => i.cat === 'BUFF');
 

@@ -22,7 +22,7 @@ import {
   EmailAuthProvider,
   updatePassword
 } from 'firebase/auth';
-import { logActivity, getRoleDefaultCanWrite } from '../utils/storage';
+import { logActivity, getRoleDefaultCanWrite, getRoleDefaultCanStockMove } from '../utils/storage';
 import {
   Users,
   UserPlus,
@@ -38,13 +38,38 @@ import {
   Eye,
   EyeOff,
   UserCheck,
-  UserX
+  UserX,
+  RotateCcw,
+  CheckSquare,
+  Square,
+  Sliders
 } from 'lucide-react';
 
 interface UserManagementViewProps {
   currentUser: AuthUser | null;
   showToast: (msg: string) => void;
 }
+
+const WRITE_PERMISSIONS_MATRIX: Array<{
+  key: string;
+  label: string;
+  desc: string;
+  icon: string;
+}> = [
+  { key: 'proc', label: 'أوامر الشراء والتوريد (المشتريات)', desc: 'إنشاء وتعديل وإلغاء أوامر الشراء', icon: '🧾' },
+  { key: 'items', label: 'بطاقات الأصناف والأسعار (المخازن)', desc: 'إضافة وتعديل بيانات الأصناف وتكلفتها', icon: '📦' },
+  { key: 'moves', label: 'حركات وصرف المخزون', desc: 'تسجيل أذون الصرف اليومي والتحويلات المخزنية', icon: '🔄' },
+  { key: 'maint', label: 'بلاغات وأوامر الصيانة', desc: 'تسجيل ومتابعة تذاكر الأعطال وخطوات الإصلاح', icon: '🛠️' },
+  { key: 'assets', label: 'سجل الأصول والمعدات الدورية', desc: 'إدارة الأصول ومتابعة الصيانة الوقائية', icon: '🏢' },
+  { key: 'clean', label: 'مهام وجداول النظافة', desc: 'توزيع وإدارة مهام النظافة اليومية والأسبوعية', icon: '🧴' },
+  { key: 'cleanHist', label: 'سجلات إتمام النظافة', desc: 'توثيق سجلات التنفيذ وتقييمات إتمام النظافة', icon: '✨' },
+  { key: 'lines', label: 'خطوط الموبايل والشرائح', desc: 'إدارة شرائح الاتصال وبيانات الموظفين والعهد', icon: '📞' },
+  { key: 'reqs', label: 'طلبات واحتياجات الأقسام', desc: 'إدارة واعتماد طلبات الشراء من الأقسام', icon: '📋' },
+  { key: 'suppliers', label: 'دليل الموردين والشركات', desc: 'إضافة وتحديث جهات الاتصال وبيانات الموردين', icon: '🏢' },
+  { key: 'recurring', label: 'الالتزامات والاشتراكات الدورية', desc: 'إدارة الفواتير والاشتراكات الدورية المجدولة', icon: '🔁' },
+  { key: 'stock', label: 'محاضر الجرد الدوري', desc: 'إجراء واعتماد محاضر الجرد الفعلي للمخزون', icon: '📊' },
+  { key: 'pettyCash', label: 'منصرفات العهدة النقدية', desc: 'تسجيل إيصالات ومصروفات العهدة النثرية', icon: '💰' }
+];
 
 export const UserManagementView: React.FC<UserManagementViewProps> = ({
   currentUser,
@@ -69,6 +94,8 @@ export const UserManagementView: React.FC<UserManagementViewProps> = ({
   const [editDisplayName, setEditDisplayName] = useState('');
   const [editRole, setEditRole] = useState<RoleKey>('warehouse');
   const [editAllowedTabs, setEditAllowedTabs] = useState<TabKey[]>([]);
+  const [editCanWrite, setEditCanWrite] = useState<string[]>([]);
+  const [editCanStockMove, setEditCanStockMove] = useState<boolean>(false);
   const [isUpdatingUser, setIsUpdatingUser] = useState(false);
 
   // Personal Password Change State
@@ -267,7 +294,30 @@ export const UserManagementView: React.FC<UserManagementViewProps> = ({
     setEditingUser(u);
     setEditDisplayName(u.displayName);
     setEditRole(u.role);
-    setEditAllowedTabs(u.allowedTabs || (ROLES[u.role]?.tabs || ['requests']));
+    setEditAllowedTabs(
+      Array.isArray(u.allowedTabs) && u.allowedTabs.length > 0
+        ? u.allowedTabs
+        : (ROLES[u.role]?.tabs || ['requests'])
+    );
+    setEditCanWrite(
+      Array.isArray(u.canWrite) && u.canWrite.length > 0
+        ? u.canWrite
+        : getRoleDefaultCanWrite(u.role)
+    );
+    setEditCanStockMove(
+      u.canStockMove !== undefined
+        ? !!u.canStockMove
+        : getRoleDefaultCanStockMove(u.role)
+    );
+  };
+
+  // Explicit Reset / Apply Role Template Defaults
+  const handleApplyRoleTemplate = (targetRole: RoleKey) => {
+    const defaultTabs = targetRole === 'manager' ? ROLES.manager.tabs : (ROLES[targetRole]?.tabs || ['requests']);
+    setEditAllowedTabs([...defaultTabs]);
+    setEditCanWrite([...getRoleDefaultCanWrite(targetRole)]);
+    setEditCanStockMove(getRoleDefaultCanStockMove(targetRole));
+    showToast(`✓ تم تطبيق الصلاحيات الافتراضية لقالب: ${ROLES[targetRole]?.label || targetRole}`);
   };
 
   // Save User Edit Changes
@@ -291,16 +341,18 @@ export const UserManagementView: React.FC<UserManagementViewProps> = ({
     setIsUpdatingUser(true);
     try {
       const userDocRef = doc(db, 'users', editingUser.uid);
-      const canWritePerms = getRoleDefaultCanWrite(editRole);
-      const canStockMove = ['manager', 'warehouse', 'buffet', 'cleaning', 'reception'].includes(editRole);
+      const isTargetMgr = editRole === 'manager';
+      const finalCanWrite = isTargetMgr ? getRoleDefaultCanWrite('manager') : editCanWrite;
+      const finalCanStockMove = isTargetMgr ? true : editCanStockMove;
+      const finalAllowedTabs = isTargetMgr ? ROLES.manager.tabs : editAllowedTabs;
 
       await updateDoc(userDocRef, {
         displayName: editDisplayName.trim(),
         label: editDisplayName.trim(),
         role: editRole,
-        canWrite: canWritePerms,
-        canStockMove,
-        allowedTabs: editRole === 'manager' ? ROLES.manager.tabs : editAllowedTabs,
+        canWrite: finalCanWrite,
+        canStockMove: finalCanStockMove,
+        allowedTabs: finalAllowedTabs,
         updatedAt: serverTimestamp(),
         updatedBy: currentUser.uid
       });
@@ -314,7 +366,7 @@ export const UserManagementView: React.FC<UserManagementViewProps> = ({
         severity: 'info'
       });
 
-      showToast(`✓ تم تحديث بيانات (${editDisplayName}) بنجاح`);
+      showToast(`✓ تم حفظ التعديلات بنجاح — ستنعكس التغييرات عند الموظف خلال ثوانٍ`);
       setEditingUser(null);
       setRefreshKey((k) => k + 1);
     } catch (err: any) {
@@ -829,63 +881,157 @@ export const UserManagementView: React.FC<UserManagementViewProps> = ({
                   />
                 </div>
 
-                <div>
-                  <label className="block text-xs font-bold text-stone-700 mb-1">
-                    القسم / الدور:
-                  </label>
-                  <select
-                    value={editRole}
-                    onChange={(e) => {
-                      const r = e.target.value as RoleKey;
-                      setEditRole(r);
-                      if (r === 'manager') {
-                        setEditAllowedTabs(ROLES.manager.tabs);
-                      } else if (ROLES[r]) {
-                        setEditAllowedTabs(ROLES[r].tabs);
-                      }
-                    }}
-                    className="w-full text-sm py-2 px-3 rounded-xl border border-stone-200 focus:border-[#075073] focus:outline-none bg-white font-medium"
-                  >
-                    <option value="warehouse">📦 المخازن (أمين المخزن)</option>
-                    <option value="purchase">🧾 المشتريات والمالية</option>
-                    <option value="buffet">☕ البوفيه والضيافة</option>
-                    <option value="maint">🛠️ الصيانة والأجهزة</option>
-                    <option value="cleaning">🧴 النظافة (مشرف/تيم ليدر)</option>
-                    <option value="reception">📞 الاستقبال والخطوط</option>
-                    <option value="manager">👔 المدير العام</option>
-                  </select>
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 p-3 bg-stone-50 rounded-xl border border-stone-200">
+                  <div className="flex-1">
+                    <label className="block text-xs font-bold text-stone-700 mb-1">
+                      القسم / الدور:
+                    </label>
+                    <select
+                      value={editRole}
+                      onChange={(e) => {
+                        const r = e.target.value as RoleKey;
+                        setEditRole(r);
+                      }}
+                      className="w-full text-sm py-2 px-3 rounded-xl border border-stone-200 focus:border-[#075073] focus:outline-none bg-white font-medium"
+                    >
+                      <option value="warehouse">📦 المخازن (أمين المخزن)</option>
+                      <option value="purchase">🧾 المشتريات والمالية</option>
+                      <option value="buffet">☕ البوفيه والضيافة</option>
+                      <option value="maint">🛠️ الصيانة والأجهزة</option>
+                      <option value="cleaning">🧴 النظافة (مشرف/تيم ليدر)</option>
+                      <option value="reception">📞 الاستقبال والخطوط</option>
+                      <option value="manager">👔 المدير العام</option>
+                    </select>
+                  </div>
+
+                  {editRole !== 'manager' && (
+                    <div className="sm:self-end pt-2 sm:pt-0">
+                      <button
+                        type="button"
+                        onClick={() => handleApplyRoleTemplate(editRole)}
+                        className="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-bold bg-amber-50 hover:bg-amber-100 text-amber-900 border border-amber-300 shadow-2xs transition-colors cursor-pointer"
+                        title="إعادة تعيين الصلاحيات والتبويبات للقيم الافتراضية لهذا الدور"
+                      >
+                        <RotateCcw className="w-3.5 h-3.5 text-amber-700" />
+                        <span>تطبيق قالب الدور الافتراضي</span>
+                      </button>
+                    </div>
+                  )}
                 </div>
 
-                {/* Allowed Tabs for Custom/Advanced Customization */}
+                {/* Permissions & Tabs Customization (when not manager) */}
                 {editRole !== 'manager' && (
-                  <div>
-                    <label className="block text-xs font-bold text-stone-700 mb-1.5">
-                      الشاشات المسموح بالوصول إليها:
-                    </label>
-                    <div className="grid grid-cols-2 gap-2 p-3 bg-stone-50 rounded-xl border border-stone-200">
-                      {allAvailableTabs.map((tKey) => {
-                        const isChecked = editAllowedTabs.includes(tKey);
-                        return (
-                          <label
-                            key={tKey}
-                            className="flex items-center gap-2 text-xs font-semibold text-stone-700 cursor-pointer"
-                          >
-                            <input
-                              type="checkbox"
-                              checked={isChecked}
-                              onChange={() => {
-                                if (isChecked) {
-                                  setEditAllowedTabs(editAllowedTabs.filter((x) => x !== tKey));
-                                } else {
-                                  setEditAllowedTabs([...editAllowedTabs, tKey]);
-                                }
-                              }}
-                              className="rounded text-[#075073] focus:ring-[#075073]"
-                            />
-                            <span>{TABS_META[tKey]?.label || tKey}</span>
-                          </label>
-                        );
-                      })}
+                  <div className="space-y-4 pt-2">
+                    {/* 1. Allowed Tabs */}
+                    <div>
+                      <div className="flex items-center justify-between mb-1.5">
+                        <label className="text-xs font-bold text-stone-800 flex items-center gap-1.5">
+                          <Sliders className="w-3.5 h-3.5 text-[#075073]" />
+                          <span>الشاشات المسموح بفتحها (allowedTabs):</span>
+                        </label>
+                        <span className="text-[11px] text-stone-500">
+                          ({editAllowedTabs.length} شاشة محددة)
+                        </span>
+                      </div>
+                      <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 p-3 bg-stone-50/80 rounded-xl border border-stone-200">
+                        {allAvailableTabs.map((tKey) => {
+                          const isChecked = editAllowedTabs.includes(tKey);
+                          return (
+                            <label
+                              key={tKey}
+                              className={`flex items-center gap-2 p-1.5 rounded-lg text-xs font-medium cursor-pointer transition-colors ${
+                                isChecked ? 'bg-white shadow-2xs text-[#075073] font-bold' : 'text-stone-600 hover:bg-stone-100'
+                              }`}
+                            >
+                              <input
+                                type="checkbox"
+                                checked={isChecked}
+                                onChange={() => {
+                                  if (isChecked) {
+                                    setEditAllowedTabs(editAllowedTabs.filter((x) => x !== tKey));
+                                  } else {
+                                    setEditAllowedTabs([...editAllowedTabs, tKey]);
+                                  }
+                                }}
+                                className="rounded text-[#075073] focus:ring-[#075073]"
+                              />
+                              <span>{TABS_META[tKey]?.icon}</span>
+                              <span className="truncate">{TABS_META[tKey]?.label || tKey}</span>
+                            </label>
+                          );
+                        })}
+                      </div>
+                    </div>
+
+                    {/* 2. Write Permissions Matrix */}
+                    <div>
+                      <div className="flex items-center justify-between mb-1.5">
+                        <label className="text-xs font-bold text-stone-800 flex items-center gap-1.5">
+                          <ShieldCheck className="w-3.5 h-3.5 text-[#075073]" />
+                          <span>صلاحيات الإضافة والتعديل والعمليات (canWrite):</span>
+                        </label>
+                        <span className="text-[11px] text-stone-500">
+                          ({editCanWrite.length} صلاحية مفعلة)
+                        </span>
+                      </div>
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 p-3 bg-stone-50/80 rounded-xl border border-stone-200 max-h-56 overflow-y-auto">
+                        {WRITE_PERMISSIONS_MATRIX.map((perm) => {
+                          const isChecked = editCanWrite.includes(perm.key);
+                          return (
+                            <label
+                              key={perm.key}
+                              className={`flex items-start gap-2 p-2 rounded-lg text-xs cursor-pointer transition-colors border ${
+                                isChecked
+                                  ? 'bg-white border-[#075073]/30 shadow-2xs text-stone-900'
+                                  : 'border-transparent text-stone-600 hover:bg-stone-100/80'
+                              }`}
+                            >
+                              <input
+                                type="checkbox"
+                                checked={isChecked}
+                                onChange={() => {
+                                  if (isChecked) {
+                                    setEditCanWrite(editCanWrite.filter((x) => x !== perm.key));
+                                  } else {
+                                    setEditCanWrite([...editCanWrite, perm.key]);
+                                  }
+                                }}
+                                className="rounded text-[#075073] focus:ring-[#075073] mt-0.5"
+                              />
+                              <div className="flex-1 min-w-0">
+                                <div className="font-bold flex items-center gap-1">
+                                  <span>{perm.icon}</span>
+                                  <span className="truncate">{perm.label}</span>
+                                </div>
+                                <div className="text-[10px] text-stone-400 mt-0.5 leading-snug">
+                                  {perm.desc}
+                                </div>
+                              </div>
+                            </label>
+                          );
+                        })}
+                      </div>
+                    </div>
+
+                    {/* 3. Direct Stock Move (canStockMove) */}
+                    <div className="p-3 bg-stone-50/80 rounded-xl border border-stone-200">
+                      <label className="flex items-start gap-3 cursor-pointer">
+                        <input
+                          type="checkbox"
+                          checked={editCanStockMove}
+                          onChange={(e) => setEditCanStockMove(e.target.checked)}
+                          className="rounded text-[#075073] focus:ring-[#075073] mt-0.5 w-4 h-4"
+                        />
+                        <div>
+                          <div className="text-xs font-bold text-stone-900 flex items-center gap-1.5">
+                            <span>📦</span>
+                            <span>السماح بالصرف المباشر وتحديث رصيد المخزون (canStockMove)</span>
+                          </div>
+                          <p className="text-[11px] text-stone-500 mt-0.5 leading-relaxed">
+                            يتيح للموظف خصم أو زيادة رصيد الأصناف في المخزن مباشرة عند تسجيل عمليات الصرف أو الاستلام أو التسوية.
+                          </p>
+                        </div>
+                      </label>
                     </div>
                   </div>
                 )}

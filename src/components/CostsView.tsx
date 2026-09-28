@@ -7,7 +7,8 @@ import {
   RecurringTemplate,
   RoleKey,
   InventoryItem,
-  StockMove
+  StockMove,
+  AuthUser
 } from '../types';
 import {
   uid,
@@ -63,6 +64,7 @@ interface CostsViewProps {
   moves?: StockMove[];
   items?: InventoryItem[];
   currentRole: RoleKey;
+  authUser?: AuthUser | null;
   onSaveRecurring?: (newRecurring: RecurringTemplate[]) => void;
   onSavePettyCash?: (newPetty: PettyCashExpense[]) => void;
   onExportCSV: (type: string) => void;
@@ -78,12 +80,15 @@ export const CostsView: React.FC<CostsViewProps> = ({
   moves = [],
   items = [],
   currentRole,
+  authUser,
   onSaveRecurring,
   onSavePettyCash,
   onExportCSV,
   showToast
 }) => {
   const isMgr = currentRole === 'manager';
+  const canWritePettyCash = isMgr || (authUser?.canWrite ? authUser.canWrite.includes('pettyCash') : ['purchase', 'buffet'].includes(currentRole));
+  const canWriteRecurring = isMgr || (authUser?.canWrite ? authUser.canWrite.includes('recurring') : currentRole === 'purchase');
   const [activeSubTab, setActiveSubTab] = useState<
     'overview' | 'opex' | 'installments' | 'petty_cash' | 'stock_consumption'
   >('overview');

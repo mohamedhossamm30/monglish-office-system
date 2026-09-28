@@ -179,6 +179,9 @@ export interface PurchaseOrder {
   subtotal?: number;
   taxTotal?: number;
   totalAmount?: number;
+  cancelledBy?: string;
+  cancelledAt?: string;
+  cancelReason?: string;
 }
 
 export interface Supplier {

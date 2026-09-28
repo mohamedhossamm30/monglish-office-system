@@ -1,5 +1,5 @@
 import React, { useState, useMemo } from 'react';
-import { CategoryKey, InventoryItem, PurchaseOrder, RoleKey, StockMove } from '../types';
+import { CategoryKey, InventoryItem, PurchaseOrder, RoleKey, StockMove, AuthUser } from '../types';
 import { CATEGORIES } from '../data/seedData';
 import {
   normName,
@@ -46,6 +46,7 @@ interface InventoryViewProps {
   moves?: StockMove[];
   proc?: PurchaseOrder[];
   currentRole: RoleKey;
+  authUser?: AuthUser | null;
   onSaveItems: (newItems: InventoryItem[]) => void;
   onSaveMoves: (newMoves: StockMove[], newItems?: InventoryItem[]) => void;
   onSaveProc?: (newProc: PurchaseOrder[]) => void;
@@ -71,6 +72,7 @@ export const InventoryView: React.FC<InventoryViewProps> = ({
   moves = [],
   proc = [],
   currentRole,
+  authUser,
   onSaveItems,
   onSaveMoves,
   onSaveProc,
@@ -84,6 +86,8 @@ export const InventoryView: React.FC<InventoryViewProps> = ({
   const safeMoves = Array.isArray(moves) ? moves : [];
   const safeProc = Array.isArray(proc) ? proc : [];
   const isMgr = currentRole === 'manager';
+  const canWriteItems = isMgr || (authUser?.canWrite ? authUser.canWrite.includes('items') : currentRole === 'warehouse');
+  const canWriteMoves = isMgr || (authUser?.canWrite ? (authUser.canWrite.includes('moves') || authUser.canWrite.includes('items')) : true) || (authUser?.canStockMove ?? true);
 
   // Sub-tabs: 'items' | 'receipts' | 'history'
   const [activeSubTab, setActiveSubTab] = useState<'items' | 'receipts' | 'history'>('items');
@@ -609,7 +613,13 @@ export const InventoryView: React.FC<InventoryViewProps> = ({
               </button>
               <button
                 onClick={handleOpenAdd}
-                className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-bold bg-[#075073] hover:bg-[#03151F] text-white shadow-xs transition-all cursor-pointer"
+                disabled={!canWriteItems}
+                className={`inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-bold shadow-xs transition-all ${
+                  canWriteItems
+                    ? 'bg-[#075073] hover:bg-[#03151F] text-white cursor-pointer'
+                    : 'bg-stone-200 text-stone-400 cursor-not-allowed'
+                }`}
+                title={canWriteItems ? 'إضافة صنف جديد' : 'ليس لديك صلاحية إضافة الأصناف'}
               >
                 <Plus className="w-4 h-4" />
                 <span>صنف جديد</span>
@@ -971,21 +981,29 @@ export const InventoryView: React.FC<InventoryViewProps> = ({
                           </td>
                           <td className="py-3 px-3.5 text-center">
                             <div className="flex items-center justify-center gap-1.5 flex-wrap">
-                              <button
-                                onClick={() => handleOpenMove(it, 'in')}
-                                className="px-2.5 py-1 rounded-lg text-[11px] font-bold bg-emerald-50 hover:bg-emerald-100 text-emerald-800 border border-emerald-300 transition-all cursor-pointer flex items-center gap-1"
-                              >
-                                <ArrowDownLeft className="w-3 h-3 text-emerald-600" />
-                                <span>وارد +</span>
-                              </button>
-                              <button
-                                onClick={() => handleOpenMove(it, 'out')}
-                                className="px-2.5 py-1 rounded-lg text-[11px] font-bold bg-amber-50 hover:bg-amber-100 text-amber-800 border border-amber-300 transition-all cursor-pointer flex items-center gap-1"
-                              >
-                                <ArrowUpRight className="w-3 h-3 text-amber-600" />
-                                <span>صرف وتوجيه −</span>
-                              </button>
-                              {isMgr && (
+                              {canWriteMoves ? (
+                                <>
+                                  <button
+                                    onClick={() => handleOpenMove(it, 'in')}
+                                    className="px-2.5 py-1 rounded-lg text-[11px] font-bold bg-emerald-50 hover:bg-emerald-100 text-emerald-800 border border-emerald-300 transition-all cursor-pointer flex items-center gap-1"
+                                  >
+                                    <ArrowDownLeft className="w-3 h-3 text-emerald-600" />
+                                    <span>وارد +</span>
+                                  </button>
+                                  <button
+                                    onClick={() => handleOpenMove(it, 'out')}
+                                    className="px-2.5 py-1 rounded-lg text-[11px] font-bold bg-amber-50 hover:bg-amber-100 text-amber-800 border border-amber-300 transition-all cursor-pointer flex items-center gap-1"
+                                  >
+                                    <ArrowUpRight className="w-3 h-3 text-amber-600" />
+                                    <span>صرف وتوجيه −</span>
+                                  </button>
+                                </>
+                              ) : (
+                                <span className="text-[10px] text-stone-400 font-semibold px-2 py-0.5 rounded bg-stone-100">
+                                  عرض فقط
+                                </span>
+                              )}
+                              {canWriteItems && (
                                 <button
                                   onClick={() => handleOpenEdit(it)}
                                   className="px-2 py-1 rounded-lg text-[11px] font-semibold text-stone-600 hover:text-stone-900 bg-stone-100 hover:bg-stone-200 transition-all cursor-pointer flex items-center gap-1"

@@ -7,9 +7,12 @@ import {
   RecurringTemplate,
   RoleKey,
   StockMove,
-  Supplier
+  Supplier,
+  SystemActivity,
+  AuthUser
 } from '../types';
 import { CATEGORIES } from '../data/seedData';
+import { saveActivityDoc } from '../utils/firebaseSync';
 import {
   isoPlusDays,
   isoToday,
@@ -47,6 +50,7 @@ import {
   Trash2,
   Upload,
   Printer,
+  Undo2,
   X
 } from 'lucide-react';
 
@@ -57,6 +61,7 @@ interface ProcurementViewProps {
   suppliers: Supplier[];
   recurring: RecurringTemplate[];
   currentRole: RoleKey;
+  authUser?: AuthUser | null;
   onSaveProc: (newProc: PurchaseOrder[]) => void;
   onSaveItems: (newItems: InventoryItem[]) => void;
   onSaveMoves: (newMoves: StockMove[], newItems?: InventoryItem[]) => void;
@@ -75,6 +80,7 @@ export const ProcurementView: React.FC<ProcurementViewProps> = ({
   suppliers = [],
   recurring = [],
   currentRole,
+  authUser,
   onSaveProc,
   onSaveItems,
   onSaveMoves,
@@ -86,6 +92,10 @@ export const ProcurementView: React.FC<ProcurementViewProps> = ({
   showToast
 }) => {
   const isMgr = currentRole === 'manager';
+  const canWriteProc = isMgr || (authUser?.canWrite ? authUser.canWrite.includes('proc') : currentRole === 'purchase');
+  const canWriteSuppliers = isMgr || (authUser?.canWrite ? authUser.canWrite.includes('suppliers') : currentRole === 'purchase');
+  const canWriteRecurring = isMgr || (authUser?.canWrite ? authUser.canWrite.includes('recurring') : currentRole === 'purchase');
+  const canReceiveProc = isMgr || (authUser?.canWrite ? (authUser.canWrite.includes('proc') || authUser.canWrite.includes('moves') || authUser.canWrite.includes('items')) : ['warehouse', 'inventory'].includes(currentRole));
 
   // Add/Edit Order Modal State
   const [showAddModal, setShowAddModal] = useState(false);
@@ -116,6 +126,25 @@ export const ProcurementView: React.FC<ProcurementViewProps> = ({
 
   // View Details Modal
   const [selectedOrder, setSelectedOrder] = useState<PurchaseOrder | null>(null);
+
+  // Cancellation Modal State
+  const [cancellingOrder, setCancellingOrder] = useState<PurchaseOrder | null>(null);
+  const [cancelReasonInput, setCancelReasonInput] = useState('');
+
+  // Return / Adjustment Modal State (Manager only)
+  const [returnOrder, setReturnOrder] = useState<PurchaseOrder | null>(null);
+  const [returnReasonInput, setReturnReasonInput] = useState('');
+  const [returnLines, setReturnLines] = useState<Array<{
+    lineId: string;
+    itemId: string | null;
+    itemName: string;
+    cat: CategoryKey;
+    code?: string;
+    unit: string;
+    price: number;
+    maxQty: number;
+    returnQty: number;
+  }>>([]);
 
   // Suppliers Modal
   const [showSuppliersModal, setShowSuppliersModal] = useState(false);
@@ -508,10 +537,176 @@ export const ProcurementView: React.FC<ProcurementViewProps> = ({
     }
   };
 
-  const handleDeleteProc = (id: string) => {
-    if (!window.confirm('هل أنت متأكد من حذف هذا الأمر نهائياً؟')) return;
-    onSaveProc(proc.filter((o) => o.id !== id));
-    showToast('تم حذف أمر الشراء');
+  const handleDeleteProc = (order: PurchaseOrder) => {
+    if (!isMgr) {
+      showToast('⚠️ حذف أمر الشراء متاح للمدير العام فقط');
+      return;
+    }
+    if (order.status !== 'قيد التنفيذ') {
+      showToast('⚠️ لا يمكن حذف أمر شراء مستلم أو ملغي');
+      return;
+    }
+    if (!window.confirm(`هل أنت متأكد من حذف أمر الشراء [${order.orderNumber || order.id}] نهائياً؟`)) return;
+
+    onSaveProc(proc.filter((o) => o.id !== order.id));
+    if (selectedOrder && selectedOrder.id === order.id) {
+      setSelectedOrder(null);
+    }
+
+    const act: SystemActivity = {
+      id: 'act_' + Date.now() + '_' + Math.random().toString(36).slice(2, 6),
+      action: 'حذف أمر شراء',
+      dept: 'المشتريات',
+      by: 'المدير',
+      details: `قام المدير بحذف أمر الشراء [${order.orderNumber || order.id}] الموجه للمورد (${order.supplier || '—'})`,
+      date: today(),
+      time: new Date().toLocaleTimeString('ar-EG', { hour: '2-digit', minute: '2-digit' }),
+      ts: Date.now(),
+      type: 'purchase',
+      severity: 'warning',
+      read: false
+    };
+    saveActivityDoc(act).catch(console.warn);
+    showToast(`تم حذف أمر الشراء [${order.orderNumber || order.id}] بنجاح`);
+  };
+
+  const handleConfirmCancelOrder = () => {
+    if (!cancellingOrder) return;
+    const reason = cancelReasonInput.trim();
+    if (!reason) {
+      showToast('⚠️ يرجى إدخال سبب الإلغاء (إجباري)');
+      return;
+    }
+
+    const cancellerTitle = isMgr ? 'المدير' : currentRole === 'purchase' ? 'المشتريات' : 'المستخدم';
+
+    const updatedProc = proc.map((x) =>
+      x.id === cancellingOrder.id
+        ? {
+            ...x,
+            status: 'ملغي' as const,
+            cancelledBy: cancellerTitle,
+            cancelledAt: today(),
+            cancelReason: reason
+          }
+        : x
+    );
+
+    onSaveProc(updatedProc);
+
+    if (selectedOrder && selectedOrder.id === cancellingOrder.id) {
+      setSelectedOrder(updatedProc.find((x) => x.id === cancellingOrder.id) || null);
+    }
+
+    const act: SystemActivity = {
+      id: 'act_' + Date.now() + '_' + Math.random().toString(36).slice(2, 6),
+      action: 'إلغاء أمر شراء',
+      dept: 'المشتريات',
+      by: cancellerTitle,
+      details: `تم إلغاء أمر الشراء [${cancellingOrder.orderNumber || cancellingOrder.id}] بواسطة (${cancellerTitle}) - السبب: ${reason}`,
+      date: today(),
+      time: new Date().toLocaleTimeString('ar-EG', { hour: '2-digit', minute: '2-digit' }),
+      ts: Date.now(),
+      type: 'purchase',
+      severity: 'warning',
+      read: false
+    };
+    saveActivityDoc(act).catch(console.warn);
+
+    setCancellingOrder(null);
+    setCancelReasonInput('');
+    showToast(`✓ تم إلغاء أمر الشراء [${cancellingOrder.orderNumber || cancellingOrder.id}] وتوثيق السبب`);
+  };
+
+  const handleOpenReturnModal = (order: PurchaseOrder) => {
+    if (!isMgr) {
+      showToast('⚠️ تسجيل التسويات والمرتجعات متاح للمدير فقط');
+      return;
+    }
+    setReturnOrder(order);
+    setReturnReasonInput('');
+    setReturnLines(
+      (order.lines || []).map((l) => ({
+        lineId: l.id,
+        itemId: l.itemId,
+        itemName: l.itemName,
+        cat: l.cat,
+        code: l.code,
+        unit: l.unit,
+        price: l.price || 0,
+        maxQty: l.qty,
+        returnQty: l.qty
+      }))
+    );
+  };
+
+  const handleConfirmReturn = () => {
+    if (!returnOrder) return;
+    const reason = returnReasonInput.trim();
+    if (!reason) {
+      showToast('⚠️ يرجى إدخال سبب المرتجع أو التسوية (إجباري)');
+      return;
+    }
+
+    const validReturnLines = returnLines.filter((l) => l.returnQty > 0);
+    if (validReturnLines.length === 0) {
+      showToast('⚠️ يرجى تحديد كمية أكبر من صفر لصنف واحد على الأقل للمرتجع');
+      return;
+    }
+
+    const newMoves: StockMove[] = [];
+    validReturnLines.forEach((l) => {
+      const matched = items.find(
+        (i) => (l.itemId && i.id === l.itemId) || i.name === l.itemName || (l.code && i.code === l.code)
+      );
+      const targetItemId = matched ? matched.id : l.itemId || uid();
+      const adjSeq = getNextDocumentSequence('ADJ');
+      const totalCost = +(l.returnQty * l.price).toFixed(2);
+
+      const move: StockMove = {
+        id: adjSeq,
+        voucherNo: adjSeq,
+        docType: 'ADJ',
+        itemId: targetItemId,
+        itemName: l.itemName,
+        code: l.code || matched?.code || 'ADJ',
+        cat: l.cat,
+        type: 'out',
+        qty: l.returnQty,
+        cost: totalCost,
+        department: 'مرتجع مشتريات',
+        person: returnOrder.supplier || 'المورد',
+        note: `مرتجع/تسوية لأمر الشراء [${returnOrder.orderNumber || returnOrder.id}] - السبب: ${reason}`,
+        date: today(),
+        ts: Date.now(),
+        by: 'المدير',
+        orderId: returnOrder.id,
+        adjustment: true
+      };
+      newMoves.push(move);
+    });
+
+    onSaveMoves([...newMoves, ...moves]);
+
+    const act: SystemActivity = {
+      id: 'act_' + Date.now() + '_' + Math.random().toString(36).slice(2, 6),
+      action: 'تسوية ومرتجع أمر شراء',
+      dept: 'المخازن والمشتريات',
+      by: 'المدير',
+      details: `قام المدير بتسجيل مرتجع/تسوية لأمر الشراء [${returnOrder.orderNumber || returnOrder.id}] بعدد (${validReturnLines.length}) أصناف - السبب: ${reason}`,
+      date: today(),
+      time: new Date().toLocaleTimeString('ar-EG', { hour: '2-digit', minute: '2-digit' }),
+      ts: Date.now(),
+      type: 'purchase',
+      severity: 'warning',
+      read: false
+    };
+    saveActivityDoc(act).catch(console.warn);
+
+    setReturnOrder(null);
+    setReturnReasonInput('');
+    setReturnLines([]);
+    showToast(`✓ تم تسجيل حركة المرتجع بنجاح وتخفيض الأرصدة (${validReturnLines.length} صنف)`);
   };
 
   const handleOrderRecurringNow = (recId: string) => {
@@ -604,7 +799,13 @@ export const ProcurementView: React.FC<ProcurementViewProps> = ({
           )}
           <button
             onClick={handleOpenAddOrder}
-            className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-bold bg-[#075073] hover:bg-[#03151F] text-white shadow-sm transition-all cursor-pointer"
+            disabled={!canWriteProc}
+            className={`inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-bold transition-all shadow-sm ${
+              canWriteProc
+                ? 'bg-[#075073] hover:bg-[#03151F] text-white cursor-pointer'
+                : 'bg-stone-200 text-stone-400 cursor-not-allowed'
+            }`}
+            title={canWriteProc ? 'إنشاء أمر شراء جديد' : 'ليس لديك صلاحية إنشاء أوامر الشراء'}
           >
             <Plus className="w-4 h-4" />
             <span>+ أمر شراء جديد</span>
@@ -783,27 +984,46 @@ export const ProcurementView: React.FC<ProcurementViewProps> = ({
                           <Eye className="w-3 h-3" />
                           <span>التفاصيل</span>
                         </button>
-                        {o.status === 'مكتمل' ? (
+                        {o.status === 'مكتمل' || o.status === 'تم الاستلام' ? (
+                          <>
+                            <span
+                              className="px-2 py-1 rounded-lg text-[10.5px] font-bold text-emerald-800 bg-emerald-50 border border-emerald-200 flex items-center gap-1"
+                              title={`تم الاستلام والتوريد للمخزن بواسطة: ${o.receivedBy || 'أمين المخزن'} بتاريخ ${o.receivedDate || o.date}`}
+                            >
+                              <CheckCircle2 className="w-3 h-3 text-emerald-600" />
+                              <span>مستلم ({o.receivedBy || 'المخازن'})</span>
+                            </span>
+                            {isMgr && (
+                              <button
+                                onClick={() => handleOpenReturnModal(o)}
+                                className="px-2.5 py-1 rounded-lg text-[11px] font-bold text-amber-900 bg-amber-50 hover:bg-amber-100 border border-amber-300 transition-all cursor-pointer flex items-center gap-1 shadow-2xs"
+                                title="تسجيل إذن تسوية أو مرتجع مخزني لأصناف هذا الأمر"
+                              >
+                                <Undo2 className="w-3 h-3 text-amber-700" />
+                                <span>تسوية / مرتجع</span>
+                              </button>
+                            )}
+                          </>
+                        ) : o.status === 'ملغي' ? (
                           <span
-                            className="px-2 py-1 rounded-lg text-[10.5px] font-bold text-emerald-800 bg-emerald-50 border border-emerald-200 flex items-center gap-1"
-                            title={`تم الاستلام والتوريد للمخزن بواسطة: ${o.receivedBy || 'أمين المخزن'} بتاريخ ${o.receivedDate || o.date}`}
+                            className="px-2 py-1 rounded-lg text-[10.5px] font-bold text-rose-800 bg-rose-50 border border-rose-200 flex items-center gap-1"
+                            title={o.cancelReason ? `سبب الإلغاء: ${o.cancelReason}` : 'أمر شراء ملغي'}
                           >
-                            <CheckCircle2 className="w-3 h-3 text-emerald-600" />
-                            <span>مستلم ({o.receivedBy || 'المخازن'})</span>
+                            <span>ملغي</span>
                           </span>
                         ) : (
-                          <button
-                            onClick={() => handleOpenEditOrder(o)}
-                            className="px-2.5 py-1 rounded-lg text-[11px] font-bold text-amber-900 bg-amber-50 hover:bg-amber-100 border border-amber-200 transition-all cursor-pointer flex items-center gap-1 shadow-2xs"
-                            title="تعديل أمر الشراء (الأصناف، التاريخ، الضريبة، المورد، الشحن)"
-                          >
-                            <Edit2 className="w-3 h-3 text-amber-700" />
-                            <span>تعديل</span>
-                          </button>
-                        )}
-                        {o.status === 'قيد التنفيذ' && (
                           <>
-                            {(isMgr || currentRole === 'warehouse' || currentRole === 'inventory') && (
+                            {canWriteProc && (
+                              <button
+                                onClick={() => handleOpenEditOrder(o)}
+                                className="px-2.5 py-1 rounded-lg text-[11px] font-bold text-amber-900 bg-amber-50 hover:bg-amber-100 border border-amber-200 transition-all cursor-pointer flex items-center gap-1 shadow-2xs"
+                                title="تعديل أمر الشراء"
+                              >
+                                <Edit2 className="w-3 h-3 text-amber-700" />
+                                <span>تعديل</span>
+                              </button>
+                            )}
+                            {canReceiveProc && (
                               <button
                                 onClick={() => handleSetOrderStatus(o.id, 'مكتمل')}
                                 className="px-2.5 py-1 rounded-lg text-[11px] font-bold text-white bg-emerald-700 hover:bg-emerald-800 transition-all cursor-pointer flex items-center gap-1 shadow-2xs"
@@ -813,23 +1033,28 @@ export const ProcurementView: React.FC<ProcurementViewProps> = ({
                                 <span>استلام المخزن (مكتمل)</span>
                               </button>
                             )}
-                            <button
-                              onClick={() => handleSetOrderStatus(o.id, 'ملغي')}
-                              className="px-2 py-1 rounded-lg text-[11px] font-bold text-rose-700 bg-rose-50 hover:bg-rose-100 border border-rose-200 transition-all cursor-pointer"
-                              title="إلغاء أمر الشراء"
-                            >
-                              إلغاء
-                            </button>
+                            {canWriteProc && (
+                              <button
+                                onClick={() => {
+                                  setCancellingOrder(o);
+                                  setCancelReasonInput('');
+                                }}
+                                className="px-2 py-1 rounded-lg text-[11px] font-bold text-rose-700 bg-rose-50 hover:bg-rose-100 border border-rose-200 transition-all cursor-pointer"
+                                title="إلغاء أمر الشراء مع توثيق السبب"
+                              >
+                                إلغاء
+                              </button>
+                            )}
+                            {isMgr && (
+                              <button
+                                onClick={() => handleDeleteProc(o)}
+                                className="p-1 rounded-lg text-rose-500 hover:text-rose-700 hover:bg-rose-50 cursor-pointer"
+                                title="حذف الأمر (الأوامر قيد التنفيذ فقط للمدير)"
+                              >
+                                <Trash2 className="w-3.5 h-3.5" />
+                              </button>
+                            )}
                           </>
-                        )}
-                        {(isMgr || currentRole === 'purchase') && (
-                          <button
-                            onClick={() => handleDeleteProc(o.id)}
-                            className="p-1 rounded-lg text-rose-500 hover:text-rose-700 hover:bg-rose-50 cursor-pointer"
-                            title="حذف الأمر"
-                          >
-                            <Trash2 className="w-3.5 h-3.5" />
-                          </button>
                         )}
                       </div>
                     </td>
@@ -1555,35 +1780,85 @@ export const ProcurementView: React.FC<ProcurementViewProps> = ({
 
             {/* Action buttons inside modal */}
             <div className="flex gap-2 pt-2 shrink-0 flex-wrap">
-              {selectedOrder.status === 'مكتمل' && !isMgr ? (
-                <div className="py-2 px-3 rounded-xl text-xs font-bold text-stone-500 bg-stone-100 border border-stone-200 flex items-center gap-1.5 cursor-not-allowed">
-                  <Lock className="w-3.5 h-3.5 text-stone-400" />
-                  <span>تم الاستلام — التعديل متاح للمدير العام فقط</span>
+              {selectedOrder.status === 'مكتمل' || selectedOrder.status === 'تم الاستلام' ? (
+                <>
+                  <div className="py-2 px-3 rounded-xl text-xs font-bold text-emerald-800 bg-emerald-50 border border-emerald-200 flex items-center gap-1.5">
+                    <Lock className="w-3.5 h-3.5 text-emerald-600" />
+                    <span>أمر مستلم ومورد للمخزن رسمياً (للقراءة فقط)</span>
+                  </div>
+                  {isMgr && (
+                    <button
+                      type="button"
+                      onClick={() => {
+                        const ord = selectedOrder;
+                        setSelectedOrder(null);
+                        handleOpenReturnModal(ord);
+                      }}
+                      className="py-2.5 px-4 rounded-xl text-xs font-bold text-amber-900 bg-amber-100 hover:bg-amber-200 transition-all flex items-center justify-center gap-1.5 cursor-pointer shadow-2xs"
+                      title="تسجيل إذن تسوية أو مرتجع مخزني لأصناف هذا الأمر"
+                    >
+                      <Undo2 className="w-4 h-4 text-amber-700" />
+                      <span>تسوية / مرتجع مخزني</span>
+                    </button>
+                  )}
+                </>
+              ) : selectedOrder.status === 'ملغي' ? (
+                <div className="p-3 bg-rose-50 rounded-xl border border-rose-200 text-xs text-rose-900 space-y-1 w-full">
+                  <div className="font-bold flex items-center gap-1 text-rose-800">
+                    <AlertCircle className="w-4 h-4 text-rose-600" />
+                    <span>أمر شراء ملغي</span>
+                  </div>
+                  <div className="text-[11px]">
+                    بواسطة: <strong>{selectedOrder.cancelledBy || 'المشتريات'}</strong> بتاريخ: {selectedOrder.cancelledAt || selectedOrder.date}
+                  </div>
+                  {selectedOrder.cancelReason && (
+                    <div className="text-[11px]">
+                      سبب الإلغاء: <strong className="text-rose-950">{selectedOrder.cancelReason}</strong>
+                    </div>
+                  )}
                 </div>
               ) : (
-                <button
-                  type="button"
-                  onClick={() => {
-                    const ord = selectedOrder;
-                    setSelectedOrder(null);
-                    handleOpenEditOrder(ord);
-                  }}
-                  className="py-2.5 px-4 rounded-xl text-xs font-bold text-amber-900 bg-amber-100 hover:bg-amber-200 transition-all flex items-center justify-center gap-1.5 cursor-pointer shadow-2xs"
-                  title={selectedOrder.status === 'مكتمل' ? 'تعديل أمر الشراء المستلم (صلاحية المدير العام)' : 'تعديل بيانات أمر الشراء أو الأصناف أو الضريبة أو الشحن'}
-                >
-                  <Edit2 className="w-4 h-4 text-amber-700" />
-                  <span>{selectedOrder.status === 'مكتمل' ? 'تعديل أمر الشراء (المدير العام)' : 'تعديل أمر الشراء'}</span>
-                </button>
-              )}
-              {(isMgr || currentRole === 'warehouse' || currentRole === 'inventory') && selectedOrder.status === 'قيد التنفيذ' && (
-                <button
-                  type="button"
-                  onClick={() => handleSetOrderStatus(selectedOrder.id, 'مكتمل')}
-                  className="flex-1 py-2.5 px-4 rounded-xl text-xs font-bold text-white bg-emerald-700 hover:bg-emerald-800 transition-all flex items-center justify-center gap-1.5 cursor-pointer shadow-xs"
-                >
-                  <Check className="w-4 h-4" />
-                  <span>استلام وتوريد الأصناف للمخزن (مكتمل)</span>
-                </button>
+                <>
+                  {(isMgr || currentRole === 'purchase') && (
+                    <button
+                      type="button"
+                      onClick={() => {
+                        const ord = selectedOrder;
+                        setSelectedOrder(null);
+                        handleOpenEditOrder(ord);
+                      }}
+                      className="py-2.5 px-4 rounded-xl text-xs font-bold text-amber-900 bg-amber-100 hover:bg-amber-200 transition-all flex items-center justify-center gap-1.5 cursor-pointer shadow-2xs"
+                      title="تعديل بيانات أمر الشراء أو الأصناف"
+                    >
+                      <Edit2 className="w-4 h-4 text-amber-700" />
+                      <span>تعديل أمر الشراء</span>
+                    </button>
+                  )}
+                  {(isMgr || currentRole === 'warehouse' || currentRole === 'inventory') && (
+                    <button
+                      type="button"
+                      onClick={() => handleSetOrderStatus(selectedOrder.id, 'مكتمل')}
+                      className="flex-1 py-2.5 px-4 rounded-xl text-xs font-bold text-white bg-emerald-700 hover:bg-emerald-800 transition-all flex items-center justify-center gap-1.5 cursor-pointer shadow-xs"
+                    >
+                      <Check className="w-4 h-4" />
+                      <span>استلام وتوريد الأصناف للمخزن (مكتمل)</span>
+                    </button>
+                  )}
+                  {(isMgr || currentRole === 'purchase') && (
+                    <button
+                      type="button"
+                      onClick={() => {
+                        const ord = selectedOrder;
+                        setSelectedOrder(null);
+                        setCancellingOrder(ord);
+                        setCancelReasonInput('');
+                      }}
+                      className="py-2.5 px-4 rounded-xl text-xs font-bold text-rose-700 bg-rose-50 hover:bg-rose-100 border border-rose-200 transition-all cursor-pointer"
+                    >
+                      إلغاء الأمر
+                    </button>
+                  )}
+                </>
               )}
               {onPrintVoucher && (
                 <button
@@ -1952,6 +2227,167 @@ export const ProcurementView: React.FC<ProcurementViewProps> = ({
                 className="flex-1 py-2 px-3 rounded-lg text-xs font-bold text-white bg-[#075073] hover:bg-[#03151F]"
               >
                 حفظ القالب
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Cancellation Modal with mandatory reason */}
+      {cancellingOrder && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-[#03151F]/50 backdrop-blur-xs">
+          <div className="w-full max-w-md bg-white rounded-2xl p-6 shadow-2xl border-t-4 border-rose-600 space-y-4">
+            <div className="flex items-center justify-between pb-2 border-b border-stone-100">
+              <div className="flex items-center gap-2 text-rose-700">
+                <AlertCircle className="w-5 h-5 text-rose-600" />
+                <h3 className="font-black text-sm">إلغاء أمر الشراء [{cancellingOrder.orderNumber || cancellingOrder.id}]</h3>
+              </div>
+              <button
+                onClick={() => {
+                  setCancellingOrder(null);
+                  setCancelReasonInput('');
+                }}
+                className="text-stone-400 hover:text-stone-600 cursor-pointer"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            <p className="text-xs text-stone-600 leading-relaxed">
+              سيتم تحويل حالة أمر الشراء الموجه إلى (<strong>{cancellingOrder.supplier}</strong>) إلى حالة <strong>ملغي</strong> وحفظه في السجل العام مع توثيق السبب والمسؤول.
+            </p>
+
+            <div>
+              <label className="block text-xs font-bold text-stone-800 mb-1.5">
+                سبب الإلغاء <span className="text-rose-600">* (إجباري)</span>:
+              </label>
+              <textarea
+                rows={3}
+                value={cancelReasonInput}
+                onChange={(e) => setCancelReasonInput(e.target.value)}
+                placeholder="اكتب سبب إلغاء أمر الشراء هنا (مثال: إلغاء الاحتياج، ارتفاع السعر، عدم توفر الصنف لدى المورد...)"
+                className="w-full p-2.5 text-xs rounded-xl border border-stone-300 focus:border-rose-600 focus:outline-none"
+                autoFocus
+              />
+            </div>
+
+            <div className="flex items-center gap-2 pt-2">
+              <button
+                type="button"
+                onClick={() => {
+                  setCancellingOrder(null);
+                  setCancelReasonInput('');
+                }}
+                className="flex-1 py-2 px-3 rounded-xl text-xs font-bold text-stone-600 bg-stone-100 hover:bg-stone-200 transition-all cursor-pointer"
+              >
+                تراجع
+              </button>
+              <button
+                type="button"
+                onClick={handleConfirmCancelOrder}
+                disabled={!cancelReasonInput.trim()}
+                className="flex-1 py-2 px-3 rounded-xl text-xs font-bold text-white bg-rose-600 hover:bg-rose-700 disabled:opacity-50 transition-all cursor-pointer shadow-xs"
+              >
+                تأكيد إلغاء الأمر
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Return / Adjustment Modal (Manager only) */}
+      {returnOrder && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-[#03151F]/50 backdrop-blur-xs">
+          <div className="w-full max-w-lg bg-white rounded-2xl p-6 shadow-2xl border-t-4 border-amber-600 space-y-4 max-h-[85vh] flex flex-col">
+            <div className="flex items-center justify-between pb-2 border-b border-stone-100 shrink-0">
+              <div className="flex items-center gap-2 text-amber-800">
+                <Undo2 className="w-5 h-5 text-amber-700" />
+                <h3 className="font-black text-sm">تسوية ومرتجع مخزني لأمر الشراء [{returnOrder.orderNumber || returnOrder.id}]</h3>
+              </div>
+              <button
+                onClick={() => {
+                  setReturnOrder(null);
+                  setReturnReasonInput('');
+                  setReturnLines([]);
+                }}
+                className="text-stone-400 hover:text-stone-600 cursor-pointer"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            <div className="p-3 bg-amber-50 rounded-xl border border-amber-200 text-xs text-amber-900 leading-relaxed shrink-0">
+              <strong>سياسة الرقابة والحوكمة:</strong> أمر الشراء مستلم ومورد بالفعل ولا يمكن تعديله. بدلاً من ذلك، يتم تسجيل <strong>حركة تسوية/مرتجع مخزني رسمية (ADJ)</strong> لخصم الكميات المرتجعة من رصيد المخزن مع توثيق السبب لحفظ سجل التدقيق.
+            </div>
+
+            <div className="space-y-3 overflow-y-auto flex-1">
+              <div>
+                <label className="block text-xs font-bold text-stone-800 mb-1">الأصناف المراد إرجاعها والكمية:</label>
+                <div className="divide-y divide-stone-100 border border-stone-200 rounded-xl overflow-hidden bg-stone-50/50">
+                  {returnLines.map((l, idx) => (
+                    <div key={l.lineId} className="p-2.5 flex items-center justify-between gap-3 text-xs">
+                      <div className="flex-1">
+                        <div className="font-bold text-stone-800">{l.itemName}</div>
+                        <div className="text-[11px] text-stone-500 font-mono">
+                          الكمية الموردة بالأمر: {l.maxQty} {l.unit} · سعر الوحدة: {l.price.toLocaleString('ar-EG')} ج.م
+                        </div>
+                      </div>
+                      <div className="flex items-center gap-1.5 shrink-0">
+                        <span className="text-[11px] font-bold text-stone-600">كمية المرتجع:</span>
+                        <input
+                          type="number"
+                          min="0"
+                          max={l.maxQty}
+                          step="any"
+                          value={l.returnQty}
+                          onChange={(e) => {
+                            const val = Math.max(0, Math.min(l.maxQty, Number(e.target.value) || 0));
+                            setReturnLines((prev) =>
+                              prev.map((item, i) => (i === idx ? { ...item, returnQty: val } : item))
+                            );
+                          }}
+                          className="w-18 p-1.5 text-center font-mono font-bold text-xs bg-white rounded-lg border border-stone-300 focus:border-amber-600 focus:outline-none"
+                        />
+                        <span className="text-xs text-stone-500">{l.unit}</span>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-xs font-bold text-stone-800 mb-1">
+                  سبب المرتجع / التسوية <span className="text-rose-600">* (إجباري)</span>:
+                </label>
+                <textarea
+                  rows={2}
+                  value={returnReasonInput}
+                  onChange={(e) => setReturnReasonInput(e.target.value)}
+                  placeholder="اكتب سبب المرتجع بالتفصيل (مثال: بضاعة تالفة تم إرجاعها للمورد، استبدال، خطأ في المواصفات...)"
+                  className="w-full p-2.5 text-xs rounded-xl border border-stone-300 focus:border-amber-600 focus:outline-none"
+                />
+              </div>
+            </div>
+
+            <div className="flex items-center gap-2 pt-2 shrink-0 border-t border-stone-100">
+              <button
+                type="button"
+                onClick={() => {
+                  setReturnOrder(null);
+                  setReturnReasonInput('');
+                  setReturnLines([]);
+                }}
+                className="flex-1 py-2 px-3 rounded-xl text-xs font-bold text-stone-600 bg-stone-100 hover:bg-stone-200 transition-all cursor-pointer"
+              >
+                إلغاء
+              </button>
+              <button
+                type="button"
+                onClick={handleConfirmReturn}
+                disabled={!returnReasonInput.trim() || returnLines.every((l) => l.returnQty <= 0)}
+                className="flex-1 py-2 px-3 rounded-xl text-xs font-bold text-white bg-amber-700 hover:bg-amber-800 disabled:opacity-50 transition-all cursor-pointer shadow-xs"
+              >
+                تأكيد المرتجع والصرف من المخزن
               </button>
             </div>
           </div>
