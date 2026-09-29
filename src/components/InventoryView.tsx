@@ -205,13 +205,13 @@ export const InventoryView: React.FC<InventoryViewProps> = ({
   );
 
   const getNextCode = (cat: CategoryKey) => {
-    return getNextItemCode(cat, safeItems);
+    return getNextItemCode(cat, safeItems, [], safeProc);
   };
 
   const handleOpenAdd = () => {
     setAddName('');
     setAddCat('OFF');
-    setAddCode(getNextItemCode('OFF', safeItems));
+    setAddCode(getNextItemCode('OFF', safeItems, [], safeProc));
     setAddUnit('عدد');
     setAddBalance('0');
     setAddMin('5');
@@ -221,7 +221,7 @@ export const InventoryView: React.FC<InventoryViewProps> = ({
 
   const handleCatChange = (cat: CategoryKey) => {
     setAddCat(cat);
-    setAddCode(getNextItemCode(cat, safeItems));
+    setAddCode(getNextItemCode(cat, safeItems, [], safeProc));
   };
 
   const handleSaveAdd = (e: React.FormEvent) => {
@@ -230,12 +230,12 @@ export const InventoryView: React.FC<InventoryViewProps> = ({
       showToast('يرجى كتابة اسم الصنف والكود');
       return;
     }
-    if (isDuplicateItemName(addName, safeItems)) {
+    if (isDuplicateItemName(addName, safeItems, [], safeProc)) {
       showToast(`⚠️ هذا الصنف [${addName.trim()}] موجود مسبقاً في المخازن لمنع التكرار`);
       return;
     }
-    if (isDuplicateItemCode(addCode, safeItems)) {
-      const nextSafe = getNextItemCode(addCat, safeItems);
+    if (isDuplicateItemCode(addCode, safeItems, [], safeProc)) {
+      const nextSafe = getNextItemCode(addCat, safeItems, [], safeProc);
       showToast(`⚠️ هذا الكود مستخدم بالفعل. الكود المقترح التالي: ${nextSafe}`);
       setAddCode(nextSafe);
       return;
@@ -454,6 +454,84 @@ export const InventoryView: React.FC<InventoryViewProps> = ({
       0
     );
 
+    // 1. Process items and create StockMove inward records
+    const newlyCreatedItems: InventoryItem[] = [];
+    const newMoves: StockMove[] = [];
+    const currentItemsPool = [...safeItems];
+
+    (receivingOrder.lines || []).forEach((line, idx) => {
+      const lineQty = Math.max(0, Number(line.qty) || 0);
+      const linePrice = Math.max(0, Number(line.price) || 0);
+      const totalCost = +(lineQty * linePrice).toFixed(2);
+
+      // Find matched item in existing items or in newly created items in this batch
+      let matched = currentItemsPool.find((i) => line.itemId && i.id === line.itemId);
+      if (!matched && line.code) {
+        matched = currentItemsPool.find((i) => i.code && i.code.trim().toLowerCase() === line.code.trim().toLowerCase());
+      }
+      if (!matched && line.itemName) {
+        matched = currentItemsPool.find((i) => normName(i.name) === normName(line.itemName));
+      }
+
+      let targetItem: InventoryItem;
+      if (matched) {
+        targetItem = matched;
+        if (linePrice > 0) {
+          targetItem.cost = linePrice;
+        }
+      } else {
+        let itemCode = (line.code || '').trim();
+        // Check if itemCode is missing or already taken by an existing item with a different name
+        const conflict = currentItemsPool.find((i) => (i.code || '').trim().toUpperCase() === itemCode.toUpperCase());
+        if (!itemCode || (conflict && normName(conflict.name) !== normName(line.itemName))) {
+          itemCode = getNextItemCode(line.cat || 'OFF', currentItemsPool, [], safeProc);
+        }
+
+        const newItem: InventoryItem = {
+          id: line.itemId || uid(),
+          name: line.itemName.trim(),
+          cat: line.cat || 'OFF',
+          code: itemCode,
+          unit: line.unit || 'عدد',
+          balance: 0, // Balance will be incremented by onSaveMoves
+          min: line.newMin || 5,
+          cost: linePrice
+        };
+        targetItem = newItem;
+        newlyCreatedItems.push(newItem);
+        currentItemsPool.push(newItem);
+      }
+
+      const moveSeq = idx === 0 ? grnSeq : getNextDocumentSequence('GRN');
+      newMoves.push({
+        id: moveSeq,
+        voucherNo: grnSeq,
+        docType: 'GRN',
+        itemId: targetItem.id,
+        itemName: targetItem.name,
+        code: targetItem.code,
+        cat: targetItem.cat,
+        type: 'in',
+        qty: lineQty,
+        cost: totalCost,
+        department: 'المخازن المركزية',
+        person: receivingOrder.supplier || 'المورد',
+        note: `توريد واستلام أمر الشراء [${receivingOrder.orderNumber || receivingOrder.id}]${receiptInvoiceNumber ? ` - فاتورة مورد: ${receiptInvoiceNumber}` : ''}${receiptNote.trim() ? ` - ${receiptNote.trim()}` : ''}`,
+        date: today(),
+        ts: Date.now() + idx,
+        by: receiverName
+      });
+    });
+
+    // 2. Commit stock moves and new items
+    if (newMoves.length > 0) {
+      onSaveMoves(
+        [...newMoves, ...safeMoves],
+        newlyCreatedItems.length > 0 ? newlyCreatedItems : undefined
+      );
+    }
+
+    // 3. Update Purchase Order Status
     if (onSaveProc) {
       const updatedOrders = safeProc.map((o) =>
         o.id === receivingOrder.id
@@ -470,7 +548,7 @@ export const InventoryView: React.FC<InventoryViewProps> = ({
       onSaveProc(updatedOrders);
     }
 
-    // Launch official Goods Receipt Voucher
+    // 4. Launch official Goods Receipt Voucher
     if (onPrintVoucher) {
       onPrintVoucher({
         title: 'إذن استلام وتوريد مخزني (بضاعة واردة من المشتريات)',
@@ -493,6 +571,7 @@ export const InventoryView: React.FC<InventoryViewProps> = ({
     }
 
     setReceivingOrder(null);
+    showToast(`تم استلام وتوريد أصناف أمر الشراء بنجاح وزيادة رصيد المخزن برقم إذن [${grnSeq}] ✓`);
   };
 
   // Quick Print of an existing StockMove

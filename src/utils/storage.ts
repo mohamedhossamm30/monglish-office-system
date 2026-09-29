@@ -258,12 +258,71 @@ export function normArabic(s?: string): string {
 }
 
 /**
- * Checks whether an item name is already taken in the inventory or pending cart lines.
+ * Helper to extract all item codes present in purchase orders lines
+ */
+export function getAllOrderCodes(proc?: PurchaseOrder[]): string[] {
+  let orders = proc;
+  if (!orders || !Array.isArray(orders) || orders.length === 0) {
+    try {
+      const stored = localStorage.getItem('monglish_proc') || localStorage.getItem('mo_proc');
+      if (stored) {
+        orders = JSON.parse(stored);
+      }
+    } catch {
+      orders = [];
+    }
+  }
+  const codes: string[] = [];
+  if (Array.isArray(orders)) {
+    for (const o of orders) {
+      for (const l of o.lines || []) {
+        if (l && l.code && typeof l.code === 'string') {
+          const c = l.code.trim();
+          if (c) codes.push(c);
+        }
+      }
+    }
+  }
+  return codes;
+}
+
+/**
+ * Helper to extract all item names present in purchase orders lines
+ */
+export function getAllOrderNames(proc?: PurchaseOrder[]): string[] {
+  let orders = proc;
+  if (!orders || !Array.isArray(orders) || orders.length === 0) {
+    try {
+      const stored = localStorage.getItem('monglish_proc') || localStorage.getItem('mo_proc');
+      if (stored) {
+        orders = JSON.parse(stored);
+      }
+    } catch {
+      orders = [];
+    }
+  }
+  const names: string[] = [];
+  if (Array.isArray(orders)) {
+    for (const o of orders) {
+      for (const l of o.lines || []) {
+        if (l && l.itemName && typeof l.itemName === 'string') {
+          const n = l.itemName.trim();
+          if (n) names.push(n);
+        }
+      }
+    }
+  }
+  return names;
+}
+
+/**
+ * Checks whether an item name is already taken in the inventory or pending cart lines or other orders.
  */
 export function isDuplicateItemName(
   name: string,
   existingItems: InventoryItem[] = [],
-  extraNames: string[] = []
+  extraNames: string[] = [],
+  proc?: PurchaseOrder[]
 ): boolean {
   const targetNorm = normArabic(name);
   if (!targetNorm) return false;
@@ -272,16 +331,21 @@ export function isDuplicateItemName(
   if (inItems) return true;
 
   const inExtras = extraNames.some((n) => normArabic(n) === targetNorm);
-  return inExtras;
+  if (inExtras) return true;
+
+  const orderNames = getAllOrderNames(proc);
+  const inOrders = orderNames.some((n) => normArabic(n) === targetNorm);
+  return inOrders;
 }
 
 /**
- * Checks whether an item code is already taken in the inventory or pending cart lines.
+ * Checks whether an item code is already taken in the inventory or pending cart lines or other orders.
  */
 export function isDuplicateItemCode(
   code: string,
   existingItems: InventoryItem[] = [],
-  extraCodes: string[] = []
+  extraCodes: string[] = [],
+  proc?: PurchaseOrder[]
 ): boolean {
   const target = (code || '').trim().toUpperCase();
   if (!target) return false;
@@ -290,20 +354,26 @@ export function isDuplicateItemCode(
   if (inItems) return true;
 
   const inExtras = extraCodes.some((c) => (c || '').trim().toUpperCase() === target);
-  return inExtras;
+  if (inExtras) return true;
+
+  const orderCodes = getAllOrderCodes(proc);
+  const inOrders = orderCodes.some((c) => (c || '').trim().toUpperCase() === target);
+  return inOrders;
 }
 
 /**
  * Smart Item Code Generator per Category / Department
  * - Normalizes STAT to OFF so "أدوات مكتبية وقرطاسية" is 100% unified.
- * - Always inspects ALL existing items in the category and pending extra codes.
+ * - Always inspects ALL existing items in the category, lines across ALL purchase orders, and pending extra codes.
  * - Identifies the true highest number (e.g. for OFF it finds OFF-88 -> produces OFF-89).
- * - Guarantees the generated code is completely unique and never repeats or resets to 01!
+ * - Tracks persistent sequence in localStorage so multiple orders never step backwards or collide!
+ * - Guarantees the generated code is completely unique and never repeats or resets!
  */
 export function getNextItemCode(
   cat: CategoryKey,
   items: InventoryItem[] = [],
-  extraCodes: string[] = []
+  extraCodes: string[] = [],
+  proc?: PurchaseOrder[]
 ): string {
   const normalizedCat = (cat === 'STAT' ? 'OFF' : cat) as CategoryKey;
   const targetPrefix = `${normalizedCat}-`;
@@ -316,12 +386,26 @@ export function getNextItemCode(
     );
   });
 
+  const orderCodes = getAllOrderCodes(proc);
+
   const allCodes = [
     ...catItems.map((i) => (i.code || '').trim()),
-    ...extraCodes.map((c) => (c || '').trim())
+    ...orderCodes.filter((c) => c.toUpperCase().startsWith(targetPrefix)),
+    ...extraCodes.map((c) => (c || '').trim()).filter((c) => c.toUpperCase().startsWith(targetPrefix))
   ];
 
-  let maxNum = 0;
+  // Persistent category counter check from localStorage
+  const counterKey = `monglish_seq_max_${normalizedCat}`;
+  let storedMax = 0;
+  try {
+    const s = localStorage.getItem(counterKey);
+    if (s) {
+      const parsed = parseInt(s, 10);
+      if (!isNaN(parsed) && parsed > 0) storedMax = parsed;
+    }
+  } catch {}
+
+  let maxNum = storedMax;
   let padLen = 2;
 
   for (const code of allCodes) {
@@ -340,9 +424,10 @@ export function getNextItemCode(
   let candidateNum = Math.max(maxNum, 0) + 1;
   let candidateCode = `${targetPrefix}${String(candidateNum).padStart(padLen, '0')}`;
 
-  // Build global set of existing codes across the whole database + extraCodes
+  // Build global set of existing codes across the whole database + all orders + extraCodes
   const allExistingCodesUpper = new Set([
     ...(items || []).map((i) => (i.code || '').trim().toUpperCase()),
+    ...orderCodes.map((c) => c.trim().toUpperCase()),
     ...extraCodes.map((c) => (c || '').trim().toUpperCase())
   ]);
 
@@ -350,6 +435,11 @@ export function getNextItemCode(
     candidateNum++;
     candidateCode = `${targetPrefix}${String(candidateNum).padStart(padLen, '0')}`;
   }
+
+  // Persist updated max to avoid backward sequence collisions
+  try {
+    localStorage.setItem(counterKey, String(candidateNum));
+  } catch {}
 
   return candidateCode;
 }

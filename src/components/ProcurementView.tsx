@@ -51,6 +51,7 @@ import {
   Upload,
   Printer,
   Undo2,
+  PackageCheck,
   X
 } from 'lucide-react';
 
@@ -95,7 +96,6 @@ export const ProcurementView: React.FC<ProcurementViewProps> = ({
   const canWriteProc = isMgr || (authUser?.canWrite ? authUser.canWrite.includes('proc') : currentRole === 'purchase');
   const canWriteSuppliers = isMgr || (authUser?.canWrite ? authUser.canWrite.includes('suppliers') : currentRole === 'purchase');
   const canWriteRecurring = isMgr || (authUser?.canWrite ? authUser.canWrite.includes('recurring') : currentRole === 'purchase');
-  const canReceiveProc = isMgr || (authUser?.canWrite ? (authUser.canWrite.includes('proc') || authUser.canWrite.includes('moves') || authUser.canWrite.includes('items')) : ['warehouse', 'inventory'].includes(currentRole));
 
   // Add/Edit Order Modal State
   const [showAddModal, setShowAddModal] = useState(false);
@@ -235,7 +235,7 @@ export const ProcurementView: React.FC<ProcurementViewProps> = ({
     setProcItemSearch('');
     setLineNewName('');
     setLineNewCat('OFF');
-    setLineNewCode(getNextItemCode('OFF', items));
+    setLineNewCode(getNextItemCode('OFF', items, [], proc));
     setLineQty('1');
     setLineUnit('عدد');
     setLinePrice('0');
@@ -266,7 +266,7 @@ export const ProcurementView: React.FC<ProcurementViewProps> = ({
     setProcItemSearch('');
     setLineNewName('');
     setLineNewCat('OFF');
-    setLineNewCode(getNextItemCode('OFF', items));
+    setLineNewCode(getNextItemCode('OFF', items, [], proc));
     setLineQty('1');
     setLineUnit('عدد');
     setLinePrice('0');
@@ -354,8 +354,8 @@ export const ProcurementView: React.FC<ProcurementViewProps> = ({
       }
       
       const cartNames = procCart.map((l) => l.itemName);
-      if (isDuplicateItemName(lineNewName, items, cartNames)) {
-        showToast(`⚠️ هذا الصنف [${lineNewName.trim()}] موجود بالفعل في المخازن أو في قائمة الطلب الحالية لمنع التكرار`);
+      if (isDuplicateItemName(lineNewName, items, cartNames, proc)) {
+        showToast(`⚠️ هذا الصنف [${lineNewName.trim()}] موجود بالفعل في المخازن أو في أوامر الشراء لمنع التكرار`);
         return;
       }
 
@@ -363,12 +363,12 @@ export const ProcurementView: React.FC<ProcurementViewProps> = ({
       let codeToUse = lineNewCode.trim();
 
       // Ensure code is not duplicated
-      if (codeToUse && isDuplicateItemCode(codeToUse, items, cartCodes)) {
-        const nextSafeCode = getNextItemCode(lineNewCat, items, cartCodes);
+      if (codeToUse && isDuplicateItemCode(codeToUse, items, cartCodes, proc)) {
+        const nextSafeCode = getNextItemCode(lineNewCat, items, cartCodes, proc);
         showToast(`⚠️ الكود [${codeToUse}] مستخدم بالفعل. تم اختيار الكود التالي المتاح [${nextSafeCode}] لمنع التكرار`);
         codeToUse = nextSafeCode;
       } else if (!codeToUse) {
-        codeToUse = getNextItemCode(lineNewCat, items, cartCodes);
+        codeToUse = getNextItemCode(lineNewCat, items, cartCodes, proc);
       }
 
       const newLine: PurchaseOrderLine = {
@@ -390,7 +390,7 @@ export const ProcurementView: React.FC<ProcurementViewProps> = ({
       setLineNewName('');
       // Prepare next sequential code in the same category automatically
       const nextCartCodes = updatedCart.map((l) => l.code || '').filter(Boolean);
-      setLineNewCode(getNextItemCode(lineNewCat, items, nextCartCodes));
+      setLineNewCode(getNextItemCode(lineNewCat, items, nextCartCodes, proc));
       showToast(`تمت إضافة الصنف الجديد بالكود [${codeToUse}] ✓`);
     }
   };
@@ -503,24 +503,22 @@ export const ProcurementView: React.FC<ProcurementViewProps> = ({
     }
   };
 
-  const handleSetOrderStatus = (orderId: string, status: 'مكتمل' | 'ملغي') => {
+  const handleSetOrderStatus = (orderId: string, status: 'جاهز للاستلام' | 'قيد التنفيذ' | 'ملغي') => {
     const o = proc.find((x) => x.id === orderId);
     if (!o) return;
 
     if (o.status === 'مكتمل' || o.status === 'تم الاستلام') {
-      showToast('⚠️ أمر الشراء مستلم ومورد للمخزن مسبقاً بالفعل منعاً للتكرار');
+      showToast('⚠️ أمر الشراء مستلم ومورد للمخزن مسبقاً بالفعل ولا يمكن تعديل حالته لمنع التضارب');
       return;
     }
-
-    const receiverTitle = isMgr ? 'المدير' : (currentRole === 'warehouse' || currentRole === 'inventory') ? 'أمين المخزن' : 'مسؤول المشتريات';
 
     const updatedProc = proc.map((x) =>
       x.id === orderId
         ? {
             ...x,
             status,
-            receivedDate: status === 'مكتمل' ? today() : x.receivedDate,
-            receivedBy: status === 'مكتمل' ? receiverTitle : x.receivedBy
+            cancelledBy: status === 'ملغي' ? (isMgr ? 'المدير' : 'المشتريات') : x.cancelledBy,
+            cancelledAt: status === 'ملغي' ? today() : x.cancelledAt
           }
         : x
     );
@@ -530,10 +528,12 @@ export const ProcurementView: React.FC<ProcurementViewProps> = ({
       setSelectedOrder(updatedProc.find((x) => x.id === orderId) || null);
     }
 
-    if (status === 'مكتمل') {
-      showToast(`تم استلام أمر الشراء وتوريد الأصناف بنجاح للمخزن بواسطة (${receiverTitle}) ✓`);
-    } else {
+    if (status === 'جاهز للاستلام') {
+      showToast(`تم تعليم أمر الشراء [${o.orderNumber || o.id}] كـ «جاهز للاستلام». يمكن لأمين المخزن الآن استلامه وفحصه وتوريده للمخزن من شاشة المخازن ✓`);
+    } else if (status === 'ملغي') {
       showToast('تم إلغاء أمر الشراء');
+    } else {
+      showToast('تم تحديث حالة أمر الشراء');
     }
   };
 
@@ -813,6 +813,19 @@ export const ProcurementView: React.FC<ProcurementViewProps> = ({
         </div>
       </div>
 
+      {/* Workflow Guidance Banner */}
+      <div className="bg-sky-50/90 border border-sky-200/90 rounded-2xl p-4 flex items-start gap-3.5 text-xs text-sky-950 shadow-2xs">
+        <PackageCheck className="w-5 h-5 text-sky-700 shrink-0 mt-0.5" />
+        <div className="space-y-1">
+          <div className="font-black text-sky-950 flex items-center gap-2">
+            <span>الدورة المستندية لفصل المسؤوليات وتوريد البضاعة:</span>
+          </div>
+          <p className="text-sky-800 leading-relaxed">
+            يختص قسم المشتريات بإصدار أوامر الشراء والتعاقد مع الموردين ومتابعة الأسعار والكميات. وعند وصول البضاعة يتم تعليم الأمر كـ <strong>«جاهز للاستلام»</strong>، ليتولى <strong>أمين المخزن بشاشة «المخازن»</strong> فحص الأصناف واستلامها رسمياً بإذن استلام مخزني (GRN) وزيادة أرصدة المخازن بدقة لمنع تكرار الأرصدة أو أخطاء الصلاحيات.
+          </p>
+        </div>
+      </div>
+
       {/* Due Recurring Reminder */}
       {dueRecurring.length > 0 && (
         <div className="bg-amber-50/70 border border-amber-300 rounded-xl p-4 shadow-sm space-y-3">
@@ -1023,15 +1036,24 @@ export const ProcurementView: React.FC<ProcurementViewProps> = ({
                                 <span>تعديل</span>
                               </button>
                             )}
-                            {canReceiveProc && (
+                            {canWriteProc && o.status === 'قيد التنفيذ' && (
                               <button
-                                onClick={() => handleSetOrderStatus(o.id, 'مكتمل')}
-                                className="px-2.5 py-1 rounded-lg text-[11px] font-bold text-white bg-emerald-700 hover:bg-emerald-800 transition-all cursor-pointer flex items-center gap-1 shadow-2xs"
-                                title="استلام وتوريد الأصناف وتحديث الأرصدة بالمخزن فوراً"
+                                onClick={() => handleSetOrderStatus(o.id, 'جاهز للاستلام')}
+                                className="px-2.5 py-1 rounded-lg text-[11px] font-bold text-sky-800 bg-sky-50 hover:bg-sky-100 border border-sky-200 transition-all cursor-pointer flex items-center gap-1 shadow-2xs"
+                                title="تعليم كـ جاهز للاستلام لإشعار أمين المخزن ببدء الاستلام والتوريد"
                               >
-                                <Check className="w-3 h-3 text-white" />
-                                <span>استلام المخزن (مكتمل)</span>
+                                <Check className="w-3 h-3 text-sky-600" />
+                                <span>جاهز للاستلام</span>
                               </button>
+                            )}
+                            {o.status === 'جاهز للاستلام' && (
+                              <span
+                                className="px-2 py-0.5 rounded-lg text-[10.5px] font-bold text-sky-800 bg-sky-50 border border-sky-200 flex items-center gap-1"
+                                title="في انتظار الاستلام والفحص والتوريد من قبل أمين المخزن"
+                              >
+                                <span className="w-1.5 h-1.5 rounded-full bg-sky-500 animate-pulse" />
+                                <span>بانتظار استلام المخزن</span>
+                              </span>
                             )}
                             {canWriteProc && (
                               <button
@@ -1349,7 +1371,7 @@ export const ProcurementView: React.FC<ProcurementViewProps> = ({
                           const newCat = e.target.value as CategoryKey;
                           setLineNewCat(newCat);
                           const currentCartCodes = procCart.map((l) => l.code || '').filter(Boolean);
-                          setLineNewCode(getNextItemCode(newCat, items, currentCartCodes));
+                          setLineNewCode(getNextItemCode(newCat, items, currentCartCodes, proc));
                         }}
                         className="w-full py-2 px-3 rounded-lg border border-stone-200 text-xs bg-white font-bold text-stone-700 focus:border-[#075073] focus:outline-none"
                       >
@@ -1834,15 +1856,21 @@ export const ProcurementView: React.FC<ProcurementViewProps> = ({
                       <span>تعديل أمر الشراء</span>
                     </button>
                   )}
-                  {(isMgr || currentRole === 'warehouse' || currentRole === 'inventory') && (
+                  {canWriteProc && selectedOrder.status === 'قيد التنفيذ' && (
                     <button
                       type="button"
-                      onClick={() => handleSetOrderStatus(selectedOrder.id, 'مكتمل')}
-                      className="flex-1 py-2.5 px-4 rounded-xl text-xs font-bold text-white bg-emerald-700 hover:bg-emerald-800 transition-all flex items-center justify-center gap-1.5 cursor-pointer shadow-xs"
+                      onClick={() => handleSetOrderStatus(selectedOrder.id, 'جاهز للاستلام')}
+                      className="flex-1 py-2.5 px-4 rounded-xl text-xs font-bold text-white bg-sky-700 hover:bg-sky-800 transition-all flex items-center justify-center gap-1.5 cursor-pointer shadow-xs"
                     >
                       <Check className="w-4 h-4" />
-                      <span>استلام وتوريد الأصناف للمخزن (مكتمل)</span>
+                      <span>تعليم كـ جاهز للاستلام بالمخزن</span>
                     </button>
+                  )}
+                  {selectedOrder.status === 'جاهز للاستلام' && (
+                    <div className="flex-1 p-2 bg-sky-50 border border-sky-200 rounded-xl text-xs text-sky-900 flex items-center gap-2">
+                      <span className="w-2 h-2 rounded-full bg-sky-500 animate-pulse" />
+                      <span>أمر الشراء جاهز للاستلام — التوريد الفعلي وإيداع الأرصدة يتم من شاشة «المخازن» عبر أمين المخزن.</span>
+                    </div>
                   )}
                   {(isMgr || currentRole === 'purchase') && (
                     <button
